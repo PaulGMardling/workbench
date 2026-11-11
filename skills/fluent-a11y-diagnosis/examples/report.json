@@ -1,0 +1,65 @@
+{
+  "protocolVersion": 1,
+  "runId": "synthetic-inconclusive-001",
+  "stage": "diagnosis",
+  "scope": {
+    "target": "Synthetic ExampleControl, keyboard activation only",
+    "revision": "unknown",
+    "boundary": "One synthetic standalone example; diagnosis only",
+    "exclusions": ["Source edits", "Publication", "Whole-product conformance"]
+  },
+  "capabilities": [
+    {"name": "Actual assistive technology observation", "available": false, "authorized": false}
+  ],
+  "evidence": [
+    {
+      "id": "E-1",
+      "kind": "report",
+      "statement": "Synthetic allegation: activating ExampleControl may not announce its updated state. This is example data, not an observed defect.",
+      "locator": "unknown",
+      "basis": "hypothesis",
+      "executionStatus": "not-run",
+      "revision": "unknown",
+      "environment": {"host": "synthetic", "timestamp": "unknown", "versions": "unknown", "freshness": "unknown"},
+      "supports": ["C-1"],
+      "contradicts": [],
+      "limits": ["No application, browser or AT was run; no source was inspected."]
+    }
+  ],
+  "claims": [
+    {
+      "id": "C-1",
+      "origin": "audit",
+      "statement": "ExampleControl may not announce its updated state.",
+      "userImpact": "If true, a screen-reader user could miss the resulting state.",
+      "executionStatus": "unavailable",
+      "verdict": "inconclusive",
+      "expectedBehavior": "The applicable state announcement expectation has not yet been established.",
+      "actualBehavior": "Actual AT speech is unknown; no observation was collected.",
+      "remedy": "unknown",
+      "rootCause": {"layer": "unknown", "certainty": "unresolved"},
+      "temporalStatus": "unknown",
+      "evidenceIds": ["E-1"],
+      "counterEvidenceIds": [],
+      "reasoning": "A synthetic allegation alone establishes neither an applicable expectation nor observed behavior.",
+      "nextAction": "Obtain authorized access, establish the applicable contract and collect actual AT observations.",
+      "verificationRecipe": [
+        "Prerequisites: obtain permission for a standalone synthetic fixture and a named browser/AT/platform; record versions and revision.",
+        "Target/input: open ExampleControl in that fixture, focus it and activate it with the keyboard.",
+        "Expected/actual: first establish the applicable state-announcement contract, then record actual speech separately from accessibility-tree state.",
+        "Pass/fail: compare actual speech with that established expectation; leave the result unavailable if AT cannot run.",
+        "Reset/cleanup: reset the fixture state and close only resources created for this check."
+      ]
+    }
+  ],
+  "coverage": [
+    {"area": "Actual screen-reader state announcement", "status": "unavailable", "reason": "No authorized AT environment is available in this synthetic example."}
+  ],
+  "challenges": [
+    {"claimIds": ["C-1"], "status": "not-performed", "evidenceIds": [], "explanation": "No independent challenge has been performed."}
+  ],
+  "approval": {"status": "not-requested", "source": "none", "claimIds": [], "boundaries": []},
+  "changes": [],
+  "verification": {"status": "not-run", "evidenceIds": [], "limits": ["Neither expectation nor runtime evidence is established."]},
+  "developerSummary": "Synthetic example only: the allegation is inconclusive. No source was changed, no execution occurred, and no approval or accessibility result is implied."
+}

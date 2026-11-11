@@ -1,0 +1,18 @@
+# Example only: verify paths, existing remotes and repository contribution rules.
+# Copy to repositories.yaml only when no local configuration already exists.
+default: example
+
+copilotApp:
+  ide: code
+
+repositories:
+  example:
+    path: ~/dev/example
+    worktreeRoot: ~/dev/worktrees/example
+    ide: code
+    git:
+      baseRemote: origin
+      pushRemote: origin
+      baseBranch: main
+    branching:
+      explicitBranchRequired: true
