@@ -97,8 +97,8 @@ remote:
 git push origin HEAD:refs/heads/fix/123-focus-dismissal
 ```
 
-Validate the destination repository and branch and perform the existing
-remote-branch conflict checks before publishing. Do not infer the destination
+Validate the destination repository and branch using the first-publication or
+existing-task update checks in `git-safety.md`. Do not infer the destination
 from the local branch name or its upstream. Do not use `-u` or change tracking
 as part of this default. Any later push must use the same explicit destination.
 PR creation must use that published head branch; if an app tool cannot select

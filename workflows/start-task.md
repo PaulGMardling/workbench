@@ -17,7 +17,6 @@ enters the creation flow. A completed creation flow results in:
 
 ### Required for Creation
 
-- Type
 - Description
 
 ### Optional
@@ -27,6 +26,7 @@ enters the creation flow. A completed creation flow results in:
 - IDE
 - Alias
 - Explicit branch name
+- Type (required only when selecting a configured template)
 
 ## Defaults
 
@@ -98,10 +98,10 @@ resolvable in `PATH` or executable at its configured path. Expand a leading
 
 ### 2. Validate Inputs
 
-Verify:
-
-- Type is provided
-- Description is provided
+Verify the description is provided, then require only the selected branch
+strategy's inputs. An explicit-branch strategy requires the exact branch name,
+not an unused task type. A template strategy requires its configured type and
+every placeholder it uses, including alias/identifier where applicable.
 
 Abort if validation fails.
 
@@ -122,11 +122,18 @@ Generate:
 
 - Worktree path
 
-### 5. Apply Git Safety Rules
+### 5. Read-Only Safety Preflight
 
 Load `git-safety.md`.
 
-Perform all required validation before making changes.
+Perform the permitted nonmutating identity, ownership, local state and path
+checks. Do not fetch, hydrate objects, invoke hooks or perform other mutations
+as preflight. If even metadata access can mutate the checkout, report that
+restriction and use an authorised alternative.
+
+Read-only results are preliminary: remote freshness and race-sensitive
+conditions are revalidated after approval. Loading Git safety does not execute
+all its action-specific procedures before their approval gate.
 
 Abort if validation fails.
 
@@ -145,9 +152,15 @@ No changes are performed before the plan is presented.
 
 Wait for explicit user approval before continuing.
 
-### 7. Create branch and worktree
+### 7. Approved Fetch, Revalidation and Creation
 
-Create the branch and worktree atomically from the configured base:
+Only after explicit approval, fetch the configured base remote and obtain
+fresh branch-conflict evidence for both configured remotes. Revalidate the
+base revision, local/remote branch absence, worktree registration and exact
+target path immediately before creation. Any failure or conflicting state
+stops execution; approval does not permit discarding changes or inventing names.
+
+Create the branch and worktree together from the verified configured base:
 
 ```sh
 git -C <repository-path> worktree add -b <branch> <worktree-path> <base-remote>/<base-branch>

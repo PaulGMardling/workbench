@@ -5,6 +5,10 @@
 This personal convention applies to code reviews across all repositories.
 Load it when reviewing a pull request.
 
+For the complete review procedure, load
+[review protocol](review-protocol.md). Its independence, evidence, deduplication
+and publication boundaries apply to initial and follow-up reviews.
+
 Load [change-assessment.md](change-assessment.md) as part of every code review.
 Assess necessity, proportionality, and scope alongside correctness before
 recommending approval, keeping the detailed assessment rules in that convention.

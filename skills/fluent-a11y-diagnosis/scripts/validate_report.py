@@ -22,7 +22,8 @@ from pathlib import Path
 EXECUTION = {"not-run", "passed", "failed", "blocked", "unavailable"}
 LIMITATION = (
     "Structural validation cannot establish evidence truth, standards applicability, "
-    "actual accessibility, trusted user approval, path authorization or publication permission."
+    "revision immutability or mapping correctness, actual accessibility, trusted user "
+    "approval, path authorization or publication permission."
 )
 
 
@@ -121,6 +122,18 @@ def observation(item):
     return usable(item) and (
         (item.get("kind") == "runtime" and item.get("basis") == "observed" and item.get("executionStatus") == "passed")
         or (item.get("kind") == "code" and item.get("basis") == "code-inspection")
+    )
+
+
+def known_revision(value):
+    return isinstance(value, str) and bool(value.strip()) and value.strip().lower() != "unknown"
+
+
+def at_revision(item, revision, mappings):
+    actual = item.get("revision")
+    return known_revision(revision) and known_revision(actual) and (
+        actual == revision
+        or (item.get("kind") == "runtime" and (revision, actual) in mappings)
     )
 
 
@@ -270,6 +283,24 @@ def validate_report(report):
     v.enum(verification.get("status"), "$.verification.status", {"not-run", "partial", "complete"})
     verified = v.refs(verification.get("evidenceIds"), "$.verification.evidenceIds", emap)
     v.strings(verification.get("limits"), "$.verification.limits")
+    fixed_revision = verification.get("fixedRevision")
+    if "fixedRevision" in verification and not known_revision(fixed_revision):
+        v.error("$.verification.fixedRevision", "must be a known nonempty revision ID (not unknown)")
+    mappings = set()
+    if "revisionMappings" in verification:
+        for index, mapping in enumerate(v.records(
+            verification["revisionMappings"], "$.verification.revisionMappings",
+            ("sourceRevision", "runtimeRevision"),
+        )):
+            p = f"$.verification.revisionMappings[{index}]"
+            for field in ("sourceRevision", "runtimeRevision"):
+                if not known_revision(mapping.get(field)):
+                    v.error(p + "." + field, "must be a known nonempty revision ID (not unknown)")
+            if all(known_revision(mapping.get(field)) for field in ("sourceRevision", "runtimeRevision")):
+                pair = (mapping["sourceRevision"], mapping["runtimeRevision"])
+                if pair in mappings:
+                    v.error(p, "duplicate revision mapping")
+                mappings.add(pair)
     required = verified
     if "requiredEvidenceIds" in verification:
         required = v.refs(verification["requiredEvidenceIds"], "$.verification.requiredEvidenceIds", emap)
@@ -277,6 +308,8 @@ def validate_report(report):
     if "requiredCoverageAreas" in verification:
         required_areas = v.refs(verification["requiredCoverageAreas"], "$.verification.requiredCoverageAreas", areas)
     if verification.get("status") == "complete":
+        if not changes and "fixedRevision" not in verification:
+            v.error("$.verification.fixedRevision", "required for complete verification-only reports")
         if r.get("stage") != "verification" or approval.get("status") != "approved":
             v.error("$.verification.status", "complete requires verification stage and approved bounded scope")
         if not required or not verified or not required_areas:
@@ -293,7 +326,8 @@ def validate_report(report):
         for cid in approved_ids:
             if not any(
                 observation(emap.get(eid, {}))
-                and emap[eid].get("revision") not in (None, "unknown")
+                and known_revision(emap[eid].get("revision"))
+                and (bool(changes) or at_revision(emap[eid], fixed_revision, mappings))
                 and any(
                     isinstance(emap[eid].get(direction), list)
                     and cid in emap[eid][direction]
@@ -301,15 +335,16 @@ def validate_report(report):
                 )
                 for eid in verified if eid in emap
             ):
-                v.error("$.verification.status", f"approved claim {cid} lacks actual observation/inspection at an identified revision")
+                v.error("$.verification.status", f"approved claim {cid} lacks actual observation/inspection at an identified revision"
+                        + (" matching verification.fixedRevision" if not changes else ""))
         for index, change in enumerate(changes):
             revision = change.get("revision")
             claim_ids = change.get("claimIds")
             for cid in claim_ids if isinstance(claim_ids, list) else []:
                 if not isinstance(cid, str):
                     continue
-                if revision in (None, "unknown") or not any(
-                    emap.get(eid, {}).get("revision") == revision
+                if not any(
+                    at_revision(emap.get(eid, {}), revision, mappings)
                     and observation(emap.get(eid, {}))
                     and any(
                         isinstance(emap[eid].get(direction), list)

@@ -36,15 +36,18 @@ If the task is simple:
 
 If the task is complex:
 
-- Before taking any action, consult a separate, high-level agent
-  (a sub-agent, e.g. via the `task` tool) to validate the best path
+- Gather enough permitted read-only context to frame the decision. Before
+  implementation, consult a separate, high-level agent where available and
+  permitted (a sub-agent, e.g. via the `task` tool) to validate the best path
   forward.
 - Present the task and the intended approach to that agent.
-- Reconcile any disagreement between the two perspectives before
-  proceeding. If the two agents cannot agree on a path forward, stop
-  and surface the disagreement to the user rather than picking one
-  side unilaterally.
-- Only after the path forward is agreed, proceed to execute it —
+- Resolve material disagreements using evidence. Escalate unresolved choices
+  affecting correctness, scope or safety rather than every difference in approach.
+- If consultation is unavailable or prohibited, disclose that limitation.
+  Proceed sequentially only where the approach is sufficiently clear and safe.
+  If independence is an explicit requirement, or a material decision remains,
+  stop the affected work and request guidance. Do not invent independent approval.
+- Once the path and any required decisions are resolved, proceed to execute it —
   applying any relevant workflow or convention as normal.
 
 ## Change Assessment

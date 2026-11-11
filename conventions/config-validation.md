@@ -19,6 +19,11 @@ created.
 
 ## Checks
 
+The read-only `scripts/doctor.py` implements the portable schema/link checks
+and optional local path/editor/overlay checks. See
+[configuration contract](../config/schema.md) for its explicit limits.
+It does not replace the authorised Git-state and remote checks below.
+
 For each configured repository (or just the one in scope, when run
 from within another workflow):
 
@@ -38,6 +43,9 @@ from within another workflow):
    configured remotes and the base branch exist in the local repository.
 7. `branching` defines either `explicitBranchRequired: true` or one or more
    branch templates.
+8. Every declared `overlays` path resolves to readable Markdown within workbench.
+   Missing declared guidance is a blocker for the dependent workflow; do not
+   substitute an original backup or silently omit personal requirements.
 
 ## Validation
 

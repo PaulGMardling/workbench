@@ -42,6 +42,10 @@ explicitly. A clone alone does not recreate local overlays or install tools.
 
 ## Entry points
 
+Agents start at [AGENTS.md](AGENTS.md) and
+[agent entry](workflows/agent-entry.md). Hosts in other repositories need an
+explicit personal pointer; this repository does not activate itself elsewhere.
+
 | Task | Guidance |
 | --- | --- |
 | Task complexity | [Task triage](conventions/task-triage.md) |
@@ -82,6 +86,32 @@ PYTHONDONTWRITEBYTECODE=1 python3 skills/fluent-a11y-diagnosis/scripts/validate_
 These checks do not prove accessibility conformance, diagnostic accuracy or
 actual browser/assistive-technology execution.
 
+## Validation
+
+Use Python 3.9+ and the development dependencies in `requirements-dev.txt` in an
+authorised execution workspace. CI installs them in its disposable runner;
+local doctor never installs or repairs anything.
+
+```sh
+PYTHONDONTWRITEBYTECODE=1 python3 scripts/doctor.py
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v
+PYTHONDONTWRITEBYTECODE=1 python3 skills/fluent-a11y-diagnosis/scripts/evaluate.py
+```
+
+Default doctor checks portable links, disclosure patterns and example config.
+To explicitly inspect local readiness without executing target Git or editors:
+
+```sh
+python3 scripts/doctor.py --config config/repositories.yaml --repository example --environment --host copilot
+```
+
+Replace `example` with an actual configured alias. Exit 0 means these static
+checks passed; exit 1 means a content/configuration/readiness failure; malformed
+CLI usage exits 2. Passing does not prove remote permissions or runtime setup.
+See the [configuration contract](config/schema.md),
+[publication boundary](conventions/publication.md), and
+[private overlay recovery](conventions/local-recovery.md).
+
 ## Agent-host integration
 
 This repository is a workflow library, not an automatically loaded configuration
@@ -97,3 +127,8 @@ document here does not establish that a running agent has read the change.
 Scheduler and agent-host integration is a separate setup step. This initial
 repository does not configure schedules, permissions, automatic reviews,
 publication or cleanup.
+
+Use the [scheduler compatibility checklist](integrations/scheduler.md) before
+proposing activation. The [compact handoff](workflows/task-handoff.md) records
+loaded guidance, actual authority and remaining checks without adding another
+tracking system.

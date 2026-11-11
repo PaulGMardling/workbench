@@ -155,3 +155,31 @@ not exclude a failing required check to manufacture completion. Complete
 verification needs observations or decisive inspection at each changed claim's
 actual fixed revision. Structural checks cannot determine whether a named
 check genuinely verifies the expected behavior.
+
+For complete verification-only reports (`changes: []`),
+`verification.fixedRevision` is required: a known, nonempty source/fixed revision
+ID, not `unknown` (case-insensitive, including surrounding whitespace).
+Every approved claim must have usable observed runtime evidence or decisive code
+inspection in `verification.evidenceIds`, explicitly supporting or contradicting
+that claim, at this intended revision. Older identified evidence alone does not
+suffice. `scope.revision` may still describe the diagnostic baseline; it is not
+implicitly the fixed revision. With changes, each change's `revision` remains
+the required identity for its claims; `fixedRevision` does not replace those
+checks. Diagnosis and partial reports do not require `fixedRevision`; when
+provided at any stage, it must be a known nonempty ID.
+
+Optional `verification.revisionMappings` is an array of
+`{sourceRevision, runtimeRevision}` objects. Both fields must be known, nonempty
+revision IDs, not `unknown`; duplicate pairs are rejected. Multiple distinct
+runtime builds may map to the same source revision. An exact declared pair
+allows **runtime** evidence at `runtimeRevision` to satisfy an intended
+`sourceRevision`, for both verification-only and changed-revision checks.
+Otherwise revision IDs must match exactly. Mappings are directional and direct:
+no reverse or transitive inference, and no mapping of code-inspection evidence.
+They do not bypass evidence usability, claim linkage, required checks or coverage.
+These fields declare identities; the validator never resolves mutable URLs or
+looks up builds. Structural validation cannot prove an ID's truth or immutability,
+that a runtime build contains its declared source, or mapping correctness.
+Record supporting provenance and limitations in the evidence and reconcile them
+outside the schema. Neither revision declarations, mappings nor successful
+validation imply approval, authorization, sign-off or publication permission.

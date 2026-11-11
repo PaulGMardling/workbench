@@ -188,7 +188,13 @@ as described below.
 
 ### Repository-Specific Accessibility PR Evidence
 
-Where the local repository policy calls for paired evidence, supply **Before**
+Load applicable personal evidence overlays through the repository's configured
+`overlays` in `config/repositories.yaml`, as described in
+[agent entry](../workflows/agent-entry.md). Personal requirements do not depend
+on the shared repository adopting the same policy. If a required overlay is
+missing or unreadable, stop the affected readiness decision and report it.
+
+Where applicable personal or repository guidance calls for paired evidence, supply **Before**
 and **After** screenshots
 only when they are needed and add meaningful evidence for reviewers. Do not
 require screenshots for every accessibility PR, including drafts. When useful,

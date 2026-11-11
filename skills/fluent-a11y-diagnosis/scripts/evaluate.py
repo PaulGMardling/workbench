@@ -70,6 +70,7 @@ def approved():
     r["changes"] = [{"claimIds": ["C-1"], "paths": ["src/control.ts"], "revision": "synthetic-r2"}]
     r["verification"] = {
         "status": "complete", "evidenceIds": ["E-1", "E-2"], "limits": ["Synthetic fixtures only."],
+        "fixedRevision": "synthetic-r2",
         "requiredEvidenceIds": ["E-1", "E-2"], "requiredCoverageAreas": ["keyboard"],
     }
     return r
@@ -390,6 +391,111 @@ class NegativeAndBoundaryInvariants(Checks):
         self.valid(r)
         r["evidence"][1]["revision"] = "unknown"
         self.invalid(r, "identified revision")
+
+    def test_verification_only_requires_known_fixed_revision(self):
+        for value in (None, "", " ", "unknown", " UNKNOWN ", [], {}, True, 2):
+            with self.subTest(value=value):
+                r = approved()
+                r["changes"] = []
+                r["verification"]["fixedRevision"] = value
+                self.invalid(r, "fixedRevision")
+        r = approved()
+        r["changes"] = []
+        del r["verification"]["fixedRevision"]
+        self.invalid(r, "fixedRevision")
+
+    def test_verification_only_rejects_old_evidence_not_baseline_scope(self):
+        r = approved()
+        r["changes"] = []
+        r["scope"]["revision"] = "synthetic-r1"
+        self.valid(r)
+        r["verification"]["fixedRevision"] = "synthetic-r3"
+        self.invalid(r, "matching verification.fixedRevision")
+
+    def test_verification_only_checks_every_approved_claim(self):
+        r = approved()
+        r["changes"] = []
+        other = copy.deepcopy(r["claims"][0])
+        other.update(id="C-2", verdict="inconclusive", evidenceIds=[], counterEvidenceIds=[])
+        r["claims"].append(other)
+        r["approval"]["claimIds"].append("C-2")
+        old_trace = record("E-3", "runtime", "Other claim observed in an old build.", basis="observed", execution="passed")
+        old_trace.update(supports=["C-2"], revision="synthetic-r1")
+        r["evidence"].append(old_trace)
+        r["verification"]["evidenceIds"].append("E-3")
+        self.invalid(r, "approved claim C-2 lacks actual observation")
+        old_trace["revision"] = "synthetic-r2"
+        self.valid(r)
+
+    def test_explicit_runtime_mapping_for_verification_and_changes(self):
+        for changes in (False, True):
+            with self.subTest(changes=changes):
+                r = approved()
+                if not changes:
+                    r["changes"] = []
+                r["evidence"][1]["revision"] = "synthetic-build-2"
+                self.invalid(r, "revision")
+                r["verification"]["revisionMappings"] = [
+                    {"sourceRevision": "synthetic-r2", "runtimeRevision": "synthetic-build-2"},
+                ]
+                self.valid(r)
+                r["evidence"][1]["executionStatus"] = "blocked"
+                self.invalid(r, "observation")
+
+    def test_mapping_is_directional_direct_and_runtime_only(self):
+        mappings = [
+            [{"sourceRevision": "synthetic-build-2", "runtimeRevision": "synthetic-r2"}],
+            [{"sourceRevision": "synthetic-r1", "runtimeRevision": "synthetic-build-2"}],
+            [{"sourceRevision": "synthetic-r2", "runtimeRevision": "synthetic-build-1"}],
+            [{"sourceRevision": "synthetic-r2", "runtimeRevision": "synthetic-intermediate"},
+             {"sourceRevision": "synthetic-intermediate", "runtimeRevision": "synthetic-build-2"}],
+        ]
+        for mapping in mappings:
+            r = approved()
+            r["changes"] = []
+            r["evidence"][1]["revision"] = "synthetic-build-2"
+            r["verification"]["revisionMappings"] = mapping
+            self.invalid(r, "matching verification.fixedRevision")
+        r["verification"]["revisionMappings"] = [
+            {"sourceRevision": "synthetic-r2", "runtimeRevision": "synthetic-build-2"},
+        ]
+        r["evidence"][1] = record("E-2", "code", "Decisive unexecuted inspection.", basis="code-inspection")
+        self.valid(r)
+        r["evidence"][1]["revision"] = "synthetic-build-2"
+        self.invalid(r, "matching verification.fixedRevision")
+
+    def test_revision_mapping_shape_known_ids_and_duplicates(self):
+        for value in (None, {}, "", [None], [{}],
+                      [{"sourceRevision": "synthetic-r2"}],
+                      [{"runtimeRevision": "synthetic-build-2"}]):
+            with self.subTest(value=value):
+                r = approved()
+                r["verification"]["revisionMappings"] = value
+                self.invalid(r, "revisionMappings")
+        for field in ("sourceRevision", "runtimeRevision"):
+            for value in (None, "", " ", "unknown", " UNKNOWN ", [], {}, False, 2):
+                r = approved()
+                mapping = {"sourceRevision": "synthetic-r2", "runtimeRevision": "synthetic-build-2"}
+                mapping[field] = value
+                r["verification"]["revisionMappings"] = [mapping]
+                self.invalid(r, field)
+        r = approved()
+        mapping = {"sourceRevision": "synthetic-r2", "runtimeRevision": "synthetic-build-2"}
+        r["verification"]["revisionMappings"] = [mapping, copy.deepcopy(mapping)]
+        self.invalid(r, "duplicate revision mapping")
+        r["verification"]["revisionMappings"][1]["runtimeRevision"] = "synthetic-build-3"
+        self.valid(r)
+
+    def test_new_revision_fields_are_not_required_for_diagnosis_or_partial(self):
+        self.valid(base())
+        r = approved()
+        r["changes"] = []
+        r["verification"]["status"] = "partial"
+        del r["verification"]["fixedRevision"]
+        self.valid(r)
+        r = approved()
+        del r["verification"]["fixedRevision"]
+        self.valid(r)  # Changed revisions remain the target when changes exist.
 
     def test_complete_requires_nonempty_plan(self):
         r = approved()

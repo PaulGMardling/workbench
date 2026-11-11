@@ -32,13 +32,14 @@ Previous approval does not carry forward to future operations.
 
 ## Repository Validation
 
-Before any workflow performs Git operations it must verify:
+Before a workflow performs Git operations, use permitted read-only metadata
+to verify:
 
-1. The current directory is a Git repository
+1. The intended target directory is the verified owning Git repository
 2. The repository is in a valid state
 3. Required remotes exist
-4. The target branch does not already exist
-5. The target worktree does not already exist
+4. The task, branch, workspace and operation have the expected identity and owner
+5. The action is authorised under current host and repository restrictions
 
 Workflow execution must stop if validation fails.
 
@@ -54,8 +55,9 @@ Remote roles are configured per repository in `config/repositories.yaml`:
 
 Workflows must:
 
-- Fetch from the configured `baseRemote`.
-- Create the task branch from `<baseRemote>/<baseBranch>`.
+- For new task creation, fetch from the configured `baseRemote` only after
+  approval of the execution plan, then revalidate the base and conflicts.
+- Create a new task branch from `<baseRemote>/<baseBranch>`.
 - Push only to the configured `pushRemote`.
 - Stop if either configured remote or the configured base branch is missing.
 
@@ -66,7 +68,7 @@ local clones may intentionally push to `origin`.
 
 ## Branch Safety
 
-Before creating a branch:
+Before creating a branch, after approval of the execution plan:
 
 1. Fetch remote references
 2. Check local branches
@@ -80,6 +82,23 @@ If a branch already exists:
 - Do not modify the requested branch name
 
 Workflow execution must stop and report the conflict.
+
+### Updating an Existing Task Branch
+
+Existence is a collision during creation, not during verified continuation.
+Before each separately authorised push, verify the recorded task owner, local
+branch and exact publishing repository/branch. Observe its current remote tip
+through the authorised account/transport; unavailable evidence is a blocker,
+not evidence that the branch is absent.
+
+For the first publication, stop if the destination branch already exists unless
+ownership and intended continuation have been explicitly reconciled. For later
+pushes, retain the recorded destination and verify that the observed remote tip
+belongs to this task and is an ancestor of the proposed local head. Use a normal
+non-force push, which also rejects a concurrent non-fast-forward change.
+Unexpected remote commits or ownership changes require reconciliation; never
+rename the destination, force push or change tracking as an automatic repair.
+This procedure grants no push or merge authority.
 
 ---
 
@@ -131,7 +150,7 @@ Users must be able to understand the planned action before execution.
 
 ## Verification
 
-After completing Git operations:
+After branch/worktree creation:
 
 1. Verify branch exists
 2. Verify worktree exists
@@ -139,6 +158,10 @@ After completing Git operations:
 4. Verify worktree is attached correctly
 
 Workflow execution is not complete until verification succeeds.
+
+After an update, verify the actual remote branch points to the intended commit.
+After read-only operations, report the facts obtained rather than applying
+creation-only postconditions. A successful command alone is not delivery proof.
 
 ---
 
