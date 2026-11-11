@@ -427,6 +427,96 @@ class NegativeAndBoundaryInvariants(Checks):
         old_trace["revision"] = "synthetic-r2"
         self.valid(r)
 
+    def test_required_stale_check_cannot_be_hidden_by_fresh_evidence(self):
+        for changes in (False, True):
+            for kind, basis, execution in (
+                ("runtime", "observed", "passed"), ("code", "code-inspection", "not-run"),
+            ):
+                with self.subTest(changes=changes, kind=kind):
+                    r = approved()
+                    if not changes:
+                        r["changes"] = []
+                    r["evidence"][1]["revision"] = "synthetic-r1"
+                    r["evidence"].append(record(
+                        "E-3", kind, "Separate current inspection, not the required keyboard check.",
+                        basis=basis, execution=execution,
+                    ))
+                    r["verification"]["evidenceIds"].append("E-3")
+                    self.invalid(r, "required evidence E-2 lacks observation/inspection at its actual fixed revision")
+                    r["verification"]["requiredEvidenceIds"].remove("E-2")
+                    self.valid(r)
+
+    def test_required_code_inspection_is_current_even_when_it_establishes_expectation(self):
+        r = approved()
+        r["evidence"].append(record(
+            "E-3", "code", "Historical inspected expectation.", basis="code-inspection",
+        ))
+        r["evidence"][-1]["revision"] = "synthetic-r1"
+        r["verification"]["evidenceIds"].append("E-3")
+        r["verification"]["requiredEvidenceIds"].append("E-3")
+        self.invalid(r, "required evidence E-3 lacks observation/inspection")
+        r["evidence"][-1]["revision"] = "synthetic-r2"
+        self.valid(r)
+
+    def test_mixed_report_binds_unchanged_claim_to_explicit_fixed_revision(self):
+        r = approved()
+        other = copy.deepcopy(r["claims"][0])
+        other.update(id="C-2", verdict="inconclusive", evidenceIds=[], counterEvidenceIds=[])
+        r["claims"].append(other)
+        r["approval"]["claimIds"].append("C-2")
+        r["verification"]["fixedRevision"] = "synthetic-r3"
+        trace = record("E-3", "runtime", "Verification-only claim observed at the changed claim's revision.",
+                       basis="observed", execution="passed")
+        trace["supports"] = ["C-2"]
+        r["evidence"].append(trace)
+        r["verification"]["evidenceIds"].append("E-3")
+        r["verification"]["requiredEvidenceIds"].append("E-3")
+        self.invalid(r, "approved claim C-2 lacks actual observation")
+        trace["revision"] = "synthetic-r3"
+        self.valid(r)
+        r["evidence"][1]["supports"].append("C-2")
+        self.invalid(r, "required evidence E-2 lacks observation/inspection")
+        r["evidence"][1]["supports"].remove("C-2")
+        del r["verification"]["fixedRevision"]
+        self.invalid(r, "fixedRevision")
+
+    def test_required_unlinked_observation_still_needs_a_bounded_target(self):
+        r = approved()
+        trace = record("E-3", "runtime", "Required setup observation.", basis="observed", execution="passed")
+        trace.update(supports=[], revision="synthetic-r1")
+        r["evidence"].append(trace)
+        r["verification"]["evidenceIds"].append("E-3")
+        r["verification"]["requiredEvidenceIds"].append("E-3")
+        self.invalid(r, "required evidence E-3 lacks observation/inspection")
+        trace["revision"] = "synthetic-build-2"
+        r["verification"]["revisionMappings"] = [
+            {"sourceRevision": "synthetic-r2", "runtimeRevision": "synthetic-build-2"},
+        ]
+        self.valid(r)
+
+    def test_required_observations_preserve_distinct_changed_revisions_and_provenance(self):
+        r = approved()
+        later = copy.deepcopy(r["changes"][0])
+        later["revision"] = "synthetic-r3"
+        r["changes"].append(later)
+        r["evidence"].append(record("E-3", "runtime", "Later revision observed.", basis="observed", execution="passed"))
+        r["evidence"][-1]["revision"] = "synthetic-r3"
+        r["evidence"].append(record("E-4", "history", "Historical correction provenance."))
+        r["evidence"][-1]["revision"] = "synthetic-r1"
+        r["evidence"][0]["revision"] = "synthetic-r1"
+        r["verification"]["evidenceIds"].extend(["E-3", "E-4"])
+        r["verification"]["requiredEvidenceIds"].extend(["E-3", "E-4"])
+        self.valid(r)
+        r["evidence"][1]["revision"] = "synthetic-r3"
+        self.invalid(r, "change 0 claim C-1 lacks observation/inspection")
+
+    def test_malformed_change_revision_does_not_fall_back_to_fixed_revision(self):
+        for revision in (None, "unknown", [], {}):
+            with self.subTest(revision=revision):
+                r = approved()
+                r["changes"][0]["revision"] = revision
+                self.invalid(r, "change 0 claim C-1 lacks observation/inspection")
+
     def test_explicit_runtime_mapping_for_verification_and_changes(self):
         for changes in (False, True):
             with self.subTest(changes=changes):

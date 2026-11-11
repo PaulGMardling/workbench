@@ -308,8 +308,18 @@ def validate_report(report):
     if "requiredCoverageAreas" in verification:
         required_areas = v.refs(verification["requiredCoverageAreas"], "$.verification.requiredCoverageAreas", areas)
     if verification.get("status") == "complete":
-        if not changes and "fixedRevision" not in verification:
-            v.error("$.verification.fixedRevision", "required for complete verification-only reports")
+        targets_by_claim = {cid: [] for cid in approved_ids}
+        for change in changes:
+            claim_ids = change.get("claimIds")
+            for cid in claim_ids if isinstance(claim_ids, list) else []:
+                if isinstance(cid, str) and cid in targets_by_claim:
+                    targets_by_claim[cid].append(change.get("revision"))
+        verification_only_ids = [cid for cid, targets in targets_by_claim.items() if not targets]
+        if (not changes or verification_only_ids) and "fixedRevision" not in verification:
+            v.error("$.verification.fixedRevision", "required for complete verification-only claims")
+        for cid in verification_only_ids:
+            targets_by_claim[cid].append(fixed_revision)
+        bounded_targets = [revision for targets in targets_by_claim.values() for revision in targets]
         if r.get("stage") != "verification" or approval.get("status") != "approved":
             v.error("$.verification.status", "complete requires verification stage and approved bounded scope")
         if not required or not verified or not required_areas:
@@ -320,14 +330,23 @@ def validate_report(report):
                 observation(e) or expectation(e) or (e.get("kind") == "history" and e.get("basis") == "source")
             ):
                 v.error("$.verification.status", f"required evidence {eid} is missing, failed, blocked or non-decisive")
+            if observation(e):
+                linked_claims = [
+                    cid for cid in approved_ids
+                    if any(isinstance(e.get(direction), list) and cid in e[direction]
+                           for direction in ("supports", "contradicts"))
+                ]
+                target_groups = [targets_by_claim[cid] for cid in linked_claims] or [bounded_targets]
+                if not all(any(at_revision(e, revision, mappings) for revision in targets)
+                           for targets in target_groups):
+                    v.error("$.verification.status", f"required evidence {eid} lacks observation/inspection at its actual fixed revision")
         for area in required_areas:
             if areas.get(area, {}).get("status") not in ("covered", "not-applicable"):
                 v.error("$.verification.status", f"required coverage {area} is missing, unavailable or deferred")
         for cid in approved_ids:
             if not any(
                 observation(emap.get(eid, {}))
-                and known_revision(emap[eid].get("revision"))
-                and (bool(changes) or at_revision(emap[eid], fixed_revision, mappings))
+                and any(at_revision(emap[eid], revision, mappings) for revision in targets_by_claim[cid])
                 and any(
                     isinstance(emap[eid].get(direction), list)
                     and cid in emap[eid][direction]
@@ -336,7 +355,7 @@ def validate_report(report):
                 for eid in verified if eid in emap
             ):
                 v.error("$.verification.status", f"approved claim {cid} lacks actual observation/inspection at an identified revision"
-                        + (" matching verification.fixedRevision" if not changes else ""))
+                        + (" matching verification.fixedRevision" if cid in verification_only_ids else ""))
         for index, change in enumerate(changes):
             revision = change.get("revision")
             claim_ids = change.get("claimIds")

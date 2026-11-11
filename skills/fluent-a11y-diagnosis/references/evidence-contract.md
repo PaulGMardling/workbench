@@ -168,6 +168,23 @@ the required identity for its claims; `fixedRevision` does not replace those
 checks. Diagnosis and partial reports do not require `fixedRevision`; when
 provided at any stage, it must be a known nonempty ID.
 
+Mixed reports apply this rule per claim: approved claims with recorded changes
+use their change revisions; approved claims without changes require
+`verification.fixedRevision`. Another claim's changes never bypass this binding.
+When verification-only claims need different fixed revisions, use separate
+reports or remain partial rather than guessing a common target.
+
+Each required observation must itself match an intended fixed revision; another
+current observation for the same claim cannot make a stale required check pass.
+For evidence linked to approved claims, match at least one intended revision
+for each linked approved claim. Unlinked required observations must match a
+revision in the bounded set of claim targets. Every recorded change revision
+still needs its own claim-linked observation. Code inspection that also
+establishes expectation is an observation for this check. Expectation-only
+sources and historical provenance need not use the fixed revision; keep
+historical observations outside `requiredEvidenceIds` when they are context,
+not required fixed-revision results.
+
 Optional `verification.revisionMappings` is an array of
 `{sourceRevision, runtimeRevision}` objects. Both fields must be known, nonempty
 revision IDs, not `unknown`; duplicate pairs are rejected. Multiple distinct
