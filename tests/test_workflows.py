@@ -44,6 +44,7 @@ class WorkflowContracts(unittest.TestCase):
         public = [
             "AGENTS.md", "scripts/doctor.py", "tests/test_workflows.py",
             ".github/workflows/validate.yml", "integrations/scheduler.md",
+            "workflows/finish-task.md",
         ]
         for path in private + public:
             result = subprocess.run(
@@ -52,6 +53,25 @@ class WorkflowContracts(unittest.TestCase):
             )
             self.assertIn(result.returncode, (0, 1), result.stderr.decode())
             self.assertEqual(result.returncode, 0 if path in private else 1, path)
+
+    def test_delivery_is_loaded_before_implementation_with_opt_out_boundaries(self):
+        entry = (ROOT / "workflows/agent-entry.md").read_text()
+        route = next(line for line in entry.splitlines() if line.startswith("| Planning or implementation |"))
+        self.assertIn("finish-task.md", route)
+        delivery = (ROOT / "workflows/finish-task.md").read_text()
+        for boundary in (
+            "Delivery is opt-out", "Creating a PR is opt-in",
+            "not review, diagnosis", "host's permissions",
+            "pre-existing staged content", "actual checked-out branch",
+            "explicit publishing refspec", "closed/merged PR",
+            "concurrent edits", "single versioned block", "partial delivery",
+        ):
+            with self.subTest(boundary=boundary):
+                self.assertIn(boundary, delivery)
+        lifecycle = (ROOT / "conventions/worktree-lifecycle.md").read_text()
+        self.assertIn("sole exception is the exact revision field", lifecycle)
+        safety = (ROOT / "conventions/git-safety.md").read_text()
+        self.assertIn("per-operation rule applies to the protected actions above", safety)
 
 
 if __name__ == "__main__":

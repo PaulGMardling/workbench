@@ -41,6 +41,7 @@
 !/workflows/
 /workflows/*
 !/workflows/start-task.md
+!/workflows/finish-task.md
 !/workflows/agent-entry.md
 !/workflows/task-handoff.md
 !/skills/

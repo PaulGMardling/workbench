@@ -74,7 +74,8 @@ and apply its app-provisioning/delegation safeguards. Record that destination
 alongside the actual local branch. An app-managed worktree may retain its
 generated account-prefixed local branch and proceed with implementation
 without another naming question. Verify task ownership and the checked-out
-local branch before edits or commits; when publishing is separately authorized,
+local branch before edits or commits; when publishing is authorised under
+[implementation delivery](finish-task.md) or a task-specific request,
 use an explicit refspec to the configured remote branch and verify it before
 PR creation. Do not misuse the app's base-branch parameter as a new-branch
 name or rename/provision a duplicate worktree to repair a naming mismatch.

@@ -53,6 +53,7 @@ explicit personal pointer; this repository does not activate itself elsewhere.
 | Pull request review | [Code review](conventions/code-review.md) |
 | Workspace selection and retention | [Worktree lifecycle](conventions/worktree-lifecycle.md) |
 | Task workspace setup | [Start task](workflows/start-task.md) and its dependencies |
+| Implementation completion | [Commit, push and existing-PR delivery](workflows/finish-task.md) |
 | Branch and worktree creation | [Branch naming](conventions/create-branch.md), [worktree creation](conventions/create-worktree.md), [Git safety](conventions/git-safety.md) |
 | Configuration checks | [Configuration validation](conventions/config-validation.md) |
 | Accessibility investigation | [Accessibility triage](conventions/accessibility-triage.md) |
@@ -60,8 +61,11 @@ explicit personal pointer; this repository does not activate itself elsewhere.
 
 Load only the guidance relevant to the task. Reuse an appropriate existing task
 workspace rather than creating another checkout. Diagnosis and review remain
-read-only unless implementation is separately authorised; publication and
-cleanup keep their existing approval boundaries.
+read-only unless implementation is separately authorised. Authorised implementation
+defaults to commit, push and refreshing an existing open PR's title/description;
+say "do not commit", "do not push" or "keep local" to opt out for the task.
+Create a new PR only on request. Host restrictions and protected-action/cleanup
+approval boundaries still apply.
 
 ## Skills
 

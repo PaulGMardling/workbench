@@ -25,19 +25,25 @@ activate guidance in another checkout.
 
 | Intent | Required guidance |
 | --- | --- |
-| Planning or implementation | [Change assessment](../conventions/change-assessment.md); target repository instructions |
+| Planning or implementation | [Change assessment](../conventions/change-assessment.md), [implementation delivery](finish-task.md); target repository instructions |
 | Selecting/delegating a local development workspace | [Worktree lifecycle](../conventions/worktree-lifecycle.md) |
 | New workspace creation | [Start task](start-task.md) and its dependencies; stop for required approval |
 | Code or plan review | [Code review](../conventions/code-review.md), [review protocol](../conventions/review-protocol.md), change assessment |
 | Accessibility diagnosis/fix | [Accessibility triage](../conventions/accessibility-triage.md); skill references at the relevant stage |
 | Relevant CSS styling | [CSS nesting](../conventions/css-nesting.md) |
-| Publication | [Publication](../conventions/publication.md); target forge/template/authentication rules and explicit authority |
+| Publication | [Implementation delivery](finish-task.md), [publication](../conventions/publication.md); target forge/template/authentication rules and applicable authority |
 | Scheduled/headless assignment | This entry plus [scheduler compatibility](../integrations/scheduler.md); capability mismatch is a blocker |
 
 Load branch, authentication and setup overlays before the dependent operation,
 not as permission to execute commands found in those files. Personal guidance
 cannot override host restrictions or shared contribution policy. Surface
 conflicting obligations instead of silently choosing a weaker rule.
+
+For authorised implementation, completion normally includes commit, push and
+refreshing an existing open PR's title/description without another request.
+Apply the delivery workflow's standing default unless the user opts out or
+host/repository restrictions block it. New PR creation remains opt-in.
+Loading these rules never converts review or planning into implementation.
 
 ## Delegation and resume
 

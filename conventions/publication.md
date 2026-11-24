@@ -11,7 +11,8 @@ force-add as a workaround. Keep generated reports and local configuration
 excluded. Inspect the exact staged snapshot, including filenames, modes,
 links and references, after the last staging change and before committing.
 Avoid broad staging commands. Recheck account, destination and actual branch
-before any separately authorised publication.
+before any publication authorised under the
+[delivery default](../workflows/finish-task.md) or a task-specific request.
 
 Run the portable [validation command](../readme.md#validation) in an authorised
 execution workspace. Static pattern/link checks catch mistakes, not all secrets,

@@ -27,6 +27,11 @@ The following actions must never be performed without explicit user approval:
 Approval must be requested every time.
 
 Previous approval does not carry forward to future operations.
+This per-operation rule applies to the protected actions above, not ordinary
+task-scoped commit/push delivery. The user's standing
+[implementation delivery default](../workflows/finish-task.md) covers normal
+commit/push and existing-PR metadata updates unless opted out or restricted
+by the host. It does not waive any safety checks below.
 
 ---
 
@@ -86,7 +91,8 @@ Workflow execution must stop and report the conflict.
 ### Updating an Existing Task Branch
 
 Existence is a collision during creation, not during verified continuation.
-Before each separately authorised push, verify the recorded task owner, local
+Before each push authorised by the delivery default or a task-specific request,
+verify the recorded task owner, local
 branch and exact publishing repository/branch. Observe its current remote tip
 through the authorised account/transport; unavailable evidence is a blocker,
 not evidence that the branch is absent.

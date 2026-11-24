@@ -28,9 +28,13 @@ contents to shared repositories. Reading this template does not configure the
 host. Keep one canonical set of detailed rules in workbench rather than copying
 it into every prompt.
 
-If a host requires a predetermined branch, automatically commits, permits
-reviewers to publish, or cleans up without your per-operation approval, reconcile
-that conflict before use. Do not weaken workbench gates silently. Where available,
+Apply the [delivery default](../workflows/finish-task.md) only to authorised
+implementation assignments, including their explicit opt-outs and host limits.
+Automatic commit/push is not permission for reviewers to publish or for a
+controller to commit unrelated leftovers. If a host requires a conflicting
+predetermined branch, exceeds that delivery scope, or cleans up without the
+required per-operation approval, reconcile the conflict before use.
+Do not weaken workbench gates silently. Where available,
 use supported disabled controller effects and scoped credentials/execution
 permissions; a prompt or `push = false` alone is not enforcement.
 If the host cannot honour a required boundary, mark it incompatible and keep
@@ -46,6 +50,8 @@ schedule, live publication, cleanup or fixture is authorised by this checklist.
 | --- | --- |
 | New task | Owner reads entry and routed guidance; records actual revision/hashes before dependent work |
 | Review | Primary and independent reviewer receive full scope and current rules; neither edits or publishes without authority |
+| Implementation delivery | Validated task changes are committed/pushed and existing PR metadata is current; no PR is created without a request |
+| Delivery opt-out | "Do not commit/push" is retained across delegation/resume; denied steps remain unperformed |
 | Missing entry/overlay | Assignment blocks explicitly rather than silently continuing |
 | Resume | Changed guidance/overlay is detected and affected decisions revalidated |
 | Scheduled request | Same routing and authority apply; ambiguous decisions become a blocked result, not guessed permission |

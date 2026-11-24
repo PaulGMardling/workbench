@@ -12,10 +12,11 @@ Actual local branch; configured publishing remote/branch (if applicable):
 Workbench root; revision; relevant dirty-file hashes:
 Guidance actually read; applicable overlay paths/hashes:
 Available vs authorised tools; explicit approvals and trusted locators:
+Delivery default or explicit opt-outs; host restrictions; owning publisher:
 Assigned owners/files; dependencies; independent reviewer handle:
 Acceptance checks; exact executed commands/results; evidence locators:
 Confirmed findings; unresolved leads; decisions needed:
-Publication state and observed remote identity (or not authorised):
+Publication state; observed remote revision; verified PR identity/metadata state:
 Retention decision; preservation uncertainty; cleanup approval if any:
 Next action and bounded stop condition:
 ```

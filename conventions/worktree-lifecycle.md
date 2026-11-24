@@ -94,16 +94,23 @@ rules require user direction, stop rather than stash, reset, or clean.
 
 ## Completion and Retention
 
+Load [implementation delivery](../workflows/finish-task.md) before implementation
+and apply it at completion: commit/push task changes and synchronise existing PR
+metadata by default unless opted out or blocked. Do not treat this as permission
+to create a PR, publish a review or clean up the workspace.
+
 ### PR Description Style
 
 Keep PR descriptions concise and focused on the problem, the change, and what
 reviewers need to check. Follow the repository's required template without
 turning the description into an investigation log.
 
-Never include commit hashes in PR descriptions, including abbreviated hashes
-or hashes embedded in links and image filenames. Keep revision identifiers in
-a separate evidence comment or artifact when traceability is needed. Refer to
-the PR branch or named baseline in the description instead.
+Do not include commit hashes in ordinary PR description prose, links or image
+filenames. The sole exception is the exact revision field in a host-required
+Agent assessment block; keep that field and block in the host's required format.
+Otherwise keep revision identifiers in a separate evidence artifact or
+separately authorised comment when traceability is needed. Refer to the PR
+branch or named baseline in the description instead.
 
 ### Personal Accessibility PR Reproductions
 

@@ -83,7 +83,8 @@ the default, not an exception requiring another naming question. Do not
 rename the app's branch, modify app metadata, or create a duplicate worktree
 merely to match the configured publishing name.
 
-When a push is separately authorized, publish `HEAD` to the exact configured
+When a push is authorised under [implementation delivery](../workflows/finish-task.md)
+or a task-specific request, publish `HEAD` to the exact configured
 branch on the configured push remote using an explicit refspec:
 
 ```sh
