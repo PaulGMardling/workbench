@@ -1,50 +1,64 @@
-"""Static instruction contracts, not proof of agent behaviour or scheduler safety."""
+"""Compatibility and publication checks, not proof of agent behaviour."""
 
+import importlib.util
 from pathlib import Path
 import subprocess
 import unittest
 
 
 ROOT = Path(__file__).resolve().parents[1]
+SPEC = importlib.util.spec_from_file_location("doctor", ROOT / "scripts/doctor.py")
+doctor = importlib.util.module_from_spec(SPEC)
+SPEC.loader.exec_module(doctor)
+
+COMPATIBILITY = {
+    "conventions/task-triage.md": "workflows/agent-entry.md",
+    "conventions/change-assessment.md": "workflows/agent-entry.md",
+    "conventions/code-review.md": "conventions/review-protocol.md",
+    "conventions/worktree-lifecycle.md": "workflows/start-task.md",
+    "conventions/create-worktree.md": "workflows/start-task.md",
+    "conventions/config-validation.md": "workflows/start-task.md",
+}
+
+
+def local_links(path):
+    return {
+        destination
+        for target in doctor.markdown_destinations((ROOT / path).read_text())
+        if (destination := doctor.local_destination(path, target)) is not None
+    }
 
 
 class WorkflowContracts(unittest.TestCase):
-    def test_creation_fetch_is_after_approval(self):
-        body = (ROOT / "workflows/start-task.md").read_text()
-        preflight = body.split("### 5.", 1)[1].split("### 6.", 1)[0]
-        approved = body.split("### 7.", 1)[1].split("### 8.", 1)[0]
-        self.assertIn("Do not fetch", preflight)
-        self.assertIn("Only after explicit approval", approved)
-        self.assertLess(approved.index("fetch"), approved.index("git -C"))
-        self.assertIn("Revalidate", approved)
+    def test_existing_entry_paths_reach_canonical_guidance(self):
+        for legacy, canonical in COMPATIBILITY.items():
+            with self.subTest(path=legacy):
+                targets = local_links(legacy)
+                self.assertIn(canonical, targets)
+                self.assertFalse(targets.intersection(COMPATIBILITY))
 
-    def test_creation_guards_are_not_universal(self):
-        body = (ROOT / "conventions/git-safety.md").read_text()
-        universal = body.split("## Repository Validation", 1)[1].split("## Remote Safety", 1)[0]
-        self.assertNotIn("does not already exist", universal)
-        update = body.split("### Updating an Existing Task Branch", 1)[1].split("## Worktree Safety", 1)[0]
-        self.assertIn("ancestor", update)
-        self.assertIn("non-force push", update)
-        self.assertIn("unavailable evidence is a blocker", update)
-
-    def test_unavailable_consultation_and_personal_evidence_are_explicit(self):
-        triage = (ROOT / "conventions/task-triage.md").read_text()
-        self.assertIn("If consultation is unavailable or prohibited", triage)
-        self.assertIn("If independence is an explicit requirement", triage)
-        lifecycle = (ROOT / "conventions/worktree-lifecycle.md").read_text()
-        self.assertIn("Personal requirements do not depend", lifecycle)
-        self.assertIn("missing or unreadable", lifecycle)
+    def test_core_guides_do_not_route_back_through_compatibility_files(self):
+        canonical = set(COMPATIBILITY.values()) | {
+            "AGENTS.md", "workflows/finish-task.md", "conventions/git-safety.md",
+            "conventions/create-branch.md", "config/schema.md",
+        }
+        for path in canonical:
+            with self.subTest(path=path):
+                self.assertFalse(local_links(path).intersection(COMPATIBILITY))
+        self.assertFalse(any(path.startswith("skills/") for path in local_links("workflows/agent-entry.md")))
 
     def test_publication_allowlist_keeps_private_state_out(self):
         private = [
-            "config/repositories.yaml", ".local/accessibility-evidence.md",
-            ".local/task-report.json", "config/github-browser.py",
+            "config/repositories.yaml", ".local/agent-profile.md",
+            ".local/accessibility-evidence.md", ".local/task-report.json",
+            "config/github-browser.py",
             "skills/fluent-modern-migration-assessment/SKILL.md",
         ]
         public = [
             "AGENTS.md", "scripts/doctor.py", "tests/test_workflows.py",
             ".github/workflows/validate.yml", "integrations/scheduler.md",
             "workflows/finish-task.md",
+            "skills/fluent-a11y-diagnosis/references/pr-evidence.md",
         ]
         for path in private + public:
             result = subprocess.run(
@@ -53,25 +67,6 @@ class WorkflowContracts(unittest.TestCase):
             )
             self.assertIn(result.returncode, (0, 1), result.stderr.decode())
             self.assertEqual(result.returncode, 0 if path in private else 1, path)
-
-    def test_delivery_is_loaded_before_implementation_with_opt_out_boundaries(self):
-        entry = (ROOT / "workflows/agent-entry.md").read_text()
-        route = next(line for line in entry.splitlines() if line.startswith("| Planning or implementation |"))
-        self.assertIn("finish-task.md", route)
-        delivery = (ROOT / "workflows/finish-task.md").read_text()
-        for boundary in (
-            "Delivery is opt-out", "Creating a PR is opt-in",
-            "not review, diagnosis", "host's permissions",
-            "pre-existing staged content", "actual checked-out branch",
-            "explicit publishing refspec", "closed/merged PR",
-            "concurrent edits", "single versioned block", "partial delivery",
-        ):
-            with self.subTest(boundary=boundary):
-                self.assertIn(boundary, delivery)
-        lifecycle = (ROOT / "conventions/worktree-lifecycle.md").read_text()
-        self.assertIn("sole exception is the exact revision field", lifecycle)
-        safety = (ROOT / "conventions/git-safety.md").read_text()
-        self.assertIn("per-operation rule applies to the protected actions above", safety)
 
 
 if __name__ == "__main__":

@@ -32,3 +32,13 @@ parent, selected executable and declared overlay readability. It does not
 execute target Git, hydrate objects, validate remote permissions/base refs,
 contact services or prove setup succeeded. Perform those remaining checks
 through the operation-specific approved workflow.
+
+For an explicitly requested local health check, run from workbench:
+
+```sh
+python3 scripts/doctor.py --config config/repositories.yaml --repository example --environment --host copilot
+```
+
+Replace `example` with the verified alias. Environment mode includes editor
+availability; report an editor-only failure separately when editor setup was
+not selected. Do not waive missing required overlays or repository/path failures.

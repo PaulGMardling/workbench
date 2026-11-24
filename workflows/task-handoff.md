@@ -9,10 +9,10 @@ Task/request locator; stage; original scope and exclusions:
 Coordinator/owning session; repository; verified workspace:
 Source/runtime revision; dirty state and work to preserve:
 Actual local branch; configured publishing remote/branch (if applicable):
-Workbench root; revision; relevant dirty-file hashes:
-Guidance actually read; applicable overlay paths/hashes:
+Workbench root/revision; guidance actually read; relevant dirty state:
+Selected personal profile/overlays; fingerprints only where resumption needs them:
 Available vs authorised tools; explicit approvals and trusted locators:
-Delivery default or explicit opt-outs; host restrictions; owning publisher:
+Actual delivery authority and opt-outs; host restrictions; owning publisher:
 Assigned owners/files; dependencies; independent reviewer handle:
 Acceptance checks; exact executed commands/results; evidence locators:
 Confirmed findings; unresolved leads; decisions needed:

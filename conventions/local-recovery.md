@@ -3,12 +3,15 @@
 The Git repository backs up portable guidance, not the whole workstation.
 Maintain a private recovery inventory in an authorised backup location:
 repository configuration; account-routing guidance; required private setup and
-evidence overlays; optional browser/debugging helpers; and agent-host pointers.
+evidence overlays; selected `.local/agent-profile.md`; optional browser/debugging
+helpers; and the trusted agent-host pointer that selects personal use.
 Record each item's owner, backup location, sensitivity, restore prerequisites
 and verification date. Never put credentials or the private inventory here.
 
 On a new machine, clone the portable workbench, restore approved local files
 without overwriting newer ones, and reconcile paths and declared overlays.
+Profile existence alone must not activate personal preferences or publication
+consent. Re-establish the current user's trusted host selection separately.
 Use [the configuration contract](../config/schema.md) and read-only doctor.
 Missing required files block dependent operations; optional helpers can remain
 unavailable with an explicit limit. Do not discover private configuration by

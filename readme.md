@@ -1,138 +1,119 @@
 # Workbench
 
-Personal development workflows, conventions and reusable agent skills.
-Workflows orchestrate, conventions define behaviour, and local configuration
-defines workstation-specific settings. Shared contribution policy stays in the
-target repository.
+A portable workflow library with optional specialist skills and separate personal
+configuration. Target repositories remain the authority for shared contribution
+policy. This is not an installed agent framework or scheduler.
 
-## Published and local content
+## Start here
 
-This repository contains a sanitised, portable subset of the local workbench.
-Private visibility is not permission to upload company information or secrets.
+Read [AGENTS.md](AGENTS.md) and [agent entry](workflows/agent-entry.md). Entry
+contains proportionate triage and routes to three operational guides:
 
-Tracked content:
-
-- General task, change-assessment, review, accessibility and Git conventions.
-- The workspace-selection and task-start workflow.
-- The portable Fluent accessibility diagnosis skill and synthetic examples.
-- An illustrative repository configuration, not a real workstation inventory.
-
-Local-only content remains excluded by a publication allowlist in `.gitignore`:
-the real `config/repositories.yaml`, account-routing instructions, specialist
-internal setup and assessment material, browser/debugging helpers, original
-documents under `.local/originals/`, and machine-generated files. Existing local
-files were retained during repository setup; Git is not their backup.
-
-New files are ignored until explicitly reviewed and allowed. Do not use
-`git add -f` to bypass this boundary. Ignore rules do not protect files that are
-already tracked, and scanners cannot establish permission to disclose content.
-Inspect staged filenames and contents before every publication.
-
-## Local configuration
-
-On a new machine, inspect `config/repositories.example.yaml` and create an
-ignored `config/repositories.yaml` with verified repository paths, worktree roots,
-editors, remote roles, base branches and branch strategies. Do not overwrite an
-existing configuration or invent contribution policies from the example.
-
-The workflows deliberately require the local configuration. Stop with a clear
-error if it is missing; the example is not a fallback. Keep any required private
-setup or authentication guidance in an authorised local location and load it
-explicitly. A clone alone does not recreate local overlays or install tools.
-
-## Entry points
-
-Agents start at [AGENTS.md](AGENTS.md) and
-[agent entry](workflows/agent-entry.md). Hosts in other repositories need an
-explicit personal pointer; this repository does not activate itself elsewhere.
-
-| Task | Guidance |
+| Need | Guide |
 | --- | --- |
-| Task complexity | [Task triage](conventions/task-triage.md) |
-| Implementation planning or review | [Change assessment](conventions/change-assessment.md) |
-| Pull request review | [Code review](conventions/code-review.md) |
-| Workspace selection and retention | [Worktree lifecycle](conventions/worktree-lifecycle.md) |
-| Task workspace setup | [Start task](workflows/start-task.md) and its dependencies |
-| Implementation completion | [Commit, push and existing-PR delivery](workflows/finish-task.md) |
-| Branch and worktree creation | [Branch naming](conventions/create-branch.md), [worktree creation](conventions/create-worktree.md), [Git safety](conventions/git-safety.md) |
-| Configuration checks | [Configuration validation](conventions/config-validation.md) |
-| Accessibility investigation | [Accessibility triage](conventions/accessibility-triage.md) |
-| Related CSS states | [CSS nesting](conventions/css-nesting.md) |
+| Select, validate, create or retain a workspace | [Workspace](workflows/start-task.md) |
+| Implement, commit/push or maintain an existing PR | [Delivery](workflows/finish-task.md) |
+| Review code or a plan | [Review](conventions/review-protocol.md) |
 
-Load only the guidance relevant to the task. Reuse an appropriate existing task
-workspace rather than creating another checkout. Diagnosis and review remain
-read-only unless implementation is separately authorised. Authorised implementation
-defaults to commit, push and refreshing an existing open PR's title/description;
-say "do not commit", "do not push" or "keep local" to opt out for the task.
-Create a new PR only on request. Host restrictions and protected-action/cleanup
-approval boundaries still apply.
+Load only the applicable sections. The short legacy convention files remain
+compatibility pointers for existing host instructions; they are not extra
+prerequisites. Reviews and planning remain read-only. Protected Git effects,
+new PRs, review submission, scheduler activation and cleanup need their own
+authority. A clone does not grant publication consent.
 
-## Skills
+## Personal use versus team adoption
 
-[Fluent accessibility diagnosis](skills/fluent-a11y-diagnosis/SKILL.md) verifies
-reported behaviour, establishes whether it is a defect, challenges conclusions
-and records evidence. Remediation requires approval of the diagnosis and scope.
-W3C WAI is the primary accessibility standards reference.
+For team use, select the shared entry point and the capabilities actually needed.
+Each person supplies their own repository configuration and explicit authority.
+Do not copy the owner's private files or presume their automatic delivery,
+editor, review-depth or styling preferences apply to somebody else.
 
-The package includes coordination, testing and reporting guidance, synthetic
-examples and structural validation. It does not contain real ticket evidence.
-It is not automatically installed in an agent host or MCP server. Read its
-entry point and required references explicitly unless host discovery has been
-verified; do not assume a slash command exists.
+A trusted personal host instruction can explicitly designate this checkout as
+the current user's personal workbench. Only that selection enables loading an
+ignored `.local/agent-profile.md`, if present. Merely contributing to this
+repository or finding the file does not select it.
 
-Run its existing structural checks from the workbench root:
+For example, configure the selected host through its supported personal settings:
 
-```sh
-PYTHONDONTWRITEBYTECODE=1 python3 skills/fluent-a11y-diagnosis/scripts/evaluate.py
-PYTHONDONTWRITEBYTECODE=1 python3 skills/fluent-a11y-diagnosis/scripts/validate_report.py skills/fluent-a11y-diagnosis/examples/report.json
+```text
+Use <absolute-workbench-root> as my personal workbench.
+Read its workflows/agent-entry.md for each new task, review and resumed assignment.
 ```
 
-These checks do not prove accessibility conformance, diagnostic accuracy or
-actual browser/assistive-technology execution.
+Replace the placeholder locally. This example does not change host settings,
+create a profile or establish consent on anyone's behalf. Preserve already
+explicit standing instructions and task opt-outs across delegation/resumption;
+do not make an opted-in user repeatedly request ordinary delivery.
+
+For repository-dependent setup, inspect
+[the example](config/repositories.example.yaml) and create an ignored
+`config/repositories.yaml` with verified paths, remote roles and branch strategy.
+Never overwrite existing configuration or use the example as a fallback.
+The [schema](config/schema.md) defines the contract. Generic read-only work does
+not require a workstation inventory.
+
+## Optional capabilities
+
+[Fluent accessibility diagnosis](skills/fluent-a11y-diagnosis/SKILL.md) contains
+evidence-backed diagnosis, supervised remediation and structural reporting.
+W3C WAI is its primary standards reference. Its detailed reporting protocol is
+for users/consumers that need it, not a prerequisite for ordinary development.
+[Runnable PR evidence](skills/fluent-a11y-diagnosis/references/pr-evidence.md)
+is required only when selected by task, repository or personal policy.
+
+Skills are not automatically registered. Explicitly load their entry and
+stage-specific references, or verify the host's supported registration.
+Synthetic checks do not prove diagnostic accuracy or browser/AT execution.
+
+The [scheduler checklist](integrations/scheduler.md) is an optional design,
+not an installed or verified adapter. Start with one selected host and bounded
+trials of loading, delegation, resume and opt-outs. Do not activate integrations
+merely to read these documents.
+
+## Publication and private state
+
+Tracked files contain sanitised shared guidance, checks, the optional skill and
+synthetic fixtures. The explicit `.gitignore` allowlist excludes real config,
+profiles, account/setup overlays, internal assessment material, browser/debugging
+helpers, originals and task history. New files require deliberate review and an
+exact allowlist entry; never force-add them.
+
+Private visibility and passing scanners do not establish disclosure permission.
+Inspect staged filenames, modes, links and contents; already tracked files are
+not protected by ignore rules. Follow [publication](conventions/publication.md).
+Git is not a backup of ignored state: use [private recovery](conventions/local-recovery.md).
 
 ## Validation
 
-Use Python 3.9+ and the development dependencies in `requirements-dev.txt` in an
-authorised execution workspace. CI installs them in its disposable runner;
-local doctor never installs or repairs anything.
+Use Python 3.9+ with `requirements-dev.txt` installed in an authorised execution
+environment. CI uses a disposable runner; doctor never installs or repairs.
+PyYAML reads configuration and markdown-it-py parses Markdown destinations.
 
 ```sh
 PYTHONDONTWRITEBYTECODE=1 python3 scripts/doctor.py
 PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v
 PYTHONDONTWRITEBYTECODE=1 python3 skills/fluent-a11y-diagnosis/scripts/evaluate.py
+PYTHONDONTWRITEBYTECODE=1 python3 skills/fluent-a11y-diagnosis/scripts/validate_report.py skills/fluent-a11y-diagnosis/examples/report.json
 ```
 
-Default doctor checks portable links, disclosure patterns and example config.
-To explicitly inspect local readiness without executing target Git or editors:
+Doctor checks the publication boundary, disclosure patterns, rendered Markdown
+links/images (including references and HTML `href`/`src`) and example config.
+It ignores link-shaped code examples, does not fetch remote URIs or validate
+anchors, and requires local targets to be published files. It is not a complete
+secret, HTML or URL-safety scanner.
+
+For explicitly selected local health checks:
 
 ```sh
 python3 scripts/doctor.py --config config/repositories.yaml --repository example --environment --host copilot
 ```
 
-Replace `example` with an actual configured alias. Exit 0 means these static
-checks passed; exit 1 means a content/configuration/readiness failure; malformed
-CLI usage exits 2. Passing does not prove remote permissions or runtime setup.
-See the [configuration contract](config/schema.md),
-[publication boundary](conventions/publication.md), and
-[private overlay recovery](conventions/local-recovery.md).
+Replace `example` with a verified configured alias. Environment mode includes
+the configured editor's availability; distinguish an editor-only failure from
+workspace validity when editor setup was not requested. No target Git, network,
+authentication or runtime verification is performed.
 
-## Agent-host integration
-
-This repository is a workflow library, not an automatically loaded configuration
-layer. Personal agent instructions must explicitly reference relevant entry
-points using the actual absolute path of the local clone. Do not copy personal
-or private workstation rules into shared target repositories.
-
-Reference task triage for new work, change assessment during planning and review,
-code review for PRs, and worktree lifecycle before selecting or provisioning a
-local workspace. Load specialist guidance only when applicable. Editing a
-document here does not establish that a running agent has read the change.
-
-Scheduler and agent-host integration is a separate setup step. This initial
-repository does not configure schedules, permissions, automatic reviews,
-publication or cleanup.
-
-Use the [scheduler compatibility checklist](integrations/scheduler.md) before
-proposing activation. The [compact handoff](workflows/task-handoff.md) records
-loaded guidance, actual authority and remaining checks without adding another
-tracking system.
+Exit 0 means the selected static checks passed, 1 means content/configuration/
+readiness failure, and 2 means invalid CLI usage. Neither these checks nor a
+[handoff receipt](workflows/task-handoff.md) proves agent compliance or host
+enforcement. Host setup and compatibility claims need observed behavioural trials.

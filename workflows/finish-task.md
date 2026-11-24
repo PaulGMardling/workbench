@@ -1,30 +1,33 @@
-# Finish implementation and deliver
+# Delivery
 
-## Standing delivery default
+## Authority and personal defaults
 
-This records the user's standing instruction across their repositories:
-completed implementation work includes committing the task changes, pushing
-them and keeping an existing open PR's title and description current. Do not
-stop at "ready to commit" or request another commit/push instruction.
+This guide defines safe delivery, not standing permission to publish. Use the
+current user's explicit task or trusted personal/host instructions. A teammate
+cloning this library does not inherit the owner's commit/push consent.
+An existing explicit opt-out delivery preference remains valid: when the user
+has selected it, completed implementation includes commit, push and maintaining
+an existing PR without repeatedly asking. Otherwise establish the affected
+operation's authority before performing it.
 
-Delivery is opt-out: an explicit "do not commit", "do not push", "keep local"
-or narrower instruction limits the affected operation for that task. Record
+For a user with that standing preference, "do not commit", "do not push",
+"keep local" or narrower instructions limit the affected operation. Record
 the restriction and carry it through delegation and resumption. Otherwise
 repeat delivery for completed follow-up fixes within the same approved scope.
 Creating a PR is opt-in: create one only when the user requests it.
 Skip opted-out steps without repeatedly asking to perform them. PR metadata
 must describe the published head, not claim that local-only work was delivered.
 
-The owning coordinator/publisher performs delivery once for the task. Delegated
-workers return their changes and evidence to that owner; this default does not
+The owning coordinator/publisher performs authorised delivery once for the task.
+Delegated workers return their changes and evidence to that owner; this does not
 make every implementation worker an independent committer or publisher.
 
-This default applies to authorised implementation, not review, diagnosis,
+Delivery applies to authorised implementation, not review, diagnosis,
 planning or suggestions. It does not authorise unrelated edits, merging,
 approving/submitting reviews, posting comments, changing draft/ready state,
 destructive Git actions, changing remotes/tracking, or activating a scheduler.
 The host's permissions and repository policies still control. If they require
-a task-specific permission that this standing instruction cannot satisfy,
+a task-specific permission that a standing instruction cannot satisfy,
 report the exact restriction and obtain that permission rather than bypassing
 it or silently skipping delivery.
 
@@ -45,10 +48,11 @@ Verify the owning task/session, actual checked-out branch, account, configured
 publishing remote/repository/branch and any existing PR identity. Use the
 recorded explicit user-approved destination for an existing task where
 applicable; otherwise resolve local configuration through
-[branch naming](../conventions/create-branch.md). The standing default supplies
-authority, not missing configuration or destination evidence. Do not infer the
-push target from an upstream or similar branch name, switch branches, provision
-a duplicate worktree or choose a default/protected branch automatically.
+[branch naming](../conventions/create-branch.md). An explicitly selected standing
+default supplies authority, not missing configuration or destination evidence.
+Do not infer the push target from an upstream or similar branch name, switch
+branches, provision a duplicate worktree or choose a default/protected branch
+automatically.
 
 Resolve a task's existing PR from the recorded locator or a unique verified
 match for its exact head repository and publishing branch, confirming task
@@ -76,7 +80,7 @@ is not an edit target or permission to create a replacement.
    creation was not requested; it is not a reason to stop before commit/push.
 5. Verify the saved metadata and report the actual delivery state concisely:
    committed/pushed revision, existing PR if any, or exact blocked steps.
-   Retain the workspace under [worktree lifecycle](../conventions/worktree-lifecycle.md);
+   Retain the workspace under [workspace retention](start-task.md#retain-or-propose-cleanup);
    delivery never authorises cleanup.
 
 ## Keep an existing PR current
@@ -100,7 +104,8 @@ at the top using the host's exact schema, current final head revision and
 observed evidence. Honour an explicit opt-out. Never fabricate scores or CI
 results, duplicate the block or introduce a GitHub-only format into another
 provider without a requirement. The exact required assessment revision field
-is the only exception to the personal no-commit-hashes-in-description rule.
+must be preserved even when a personal profile otherwise restricts revision
+hashes in ordinary PR prose. Do not impose that personal style on other users.
 
 If publication or metadata editing fails or has an uncertain result, inspect
 the remote/PR before retrying. Do not repeat successful steps or create

@@ -18,7 +18,8 @@ provide a small pointer with the actual authorised workbench location:
 ```text
 For each assignment and resumed task, read <absolute-workbench-root>/workflows/agent-entry.md
 and the required stage-specific references and declared local overlays.
-Record the loaded revision and relevant file hashes in the private task handoff.
+Record the loaded revision, guidance and relevant dirty state in the private task handoff.
+Fingerprint mutable guidance when a consequential handoff needs it.
 If required guidance cannot be read, block dependent work; do not use cached rules.
 Pass the same guidance and authority boundaries to engineers and reviewers.
 ```
@@ -28,8 +29,8 @@ contents to shared repositories. Reading this template does not configure the
 host. Keep one canonical set of detailed rules in workbench rather than copying
 it into every prompt.
 
-Apply the [delivery default](../workflows/finish-task.md) only to authorised
-implementation assignments, including their explicit opt-outs and host limits.
+Apply [delivery](../workflows/finish-task.md) only within the current user's
+explicit authority, including selected standing preferences, opt-outs and host limits.
 Automatic commit/push is not permission for reviewers to publish or for a
 controller to commit unrelated leftovers. If a host requires a conflicting
 predetermined branch, exceeds that delivery scope, or cleans up without the
@@ -48,9 +49,10 @@ schedule, live publication, cleanup or fixture is authorised by this checklist.
 
 | Case | Required observation |
 | --- | --- |
-| New task | Owner reads entry and routed guidance; records actual revision/hashes before dependent work |
-| Review | Primary and independent reviewer receive full scope and current rules; neither edits or publishes without authority |
-| Implementation delivery | Validated task changes are committed/pushed and existing PR metadata is current; no PR is created without a request |
+| New task | Owner reads entry/routed guidance; records revision and relevant dirty state before dependent work |
+| Profile selection | A generic clone grants no publication consent; only trusted personal selection loads the current user's profile |
+| Review | Reviewers receive full scope/rules; required independent pass is preserved; no unauthorised edits/publication |
+| Implementation delivery | Effects match the current user's actual task/standing authority; no PR is created without a request |
 | Delivery opt-out | "Do not commit/push" is retained across delegation/resume; denied steps remain unperformed |
 | Missing entry/overlay | Assignment blocks explicitly rather than silently continuing |
 | Resume | Changed guidance/overlay is detected and affected decisions revalidated |

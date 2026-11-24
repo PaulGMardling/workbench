@@ -1,5 +1,7 @@
 import importlib.util
 from pathlib import Path
+import subprocess
+import sys
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -123,6 +125,108 @@ class DoctorTests(unittest.TestCase):
         ignored = type("Result", (), {"returncode": 0, "stdout": b"config/repositories.yaml\0"})()
         with patch.object(doctor.subprocess, "run", side_effect=[listed, ignored]):
             self.assertTrue(any("publication allowlist" in error for error in doctor.content_errors(ROOT)))
+
+    def content_errors(self, body, source="readme.md"):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            published = {source, "guide.md", "docs/with space.md"}
+            for name in published:
+                path = root / name
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text(body if name == source else "Published document\n")
+            listed = type("Result", (), {"returncode": 0, "stdout": "\0".join(published).encode()})()
+            permitted = type("Result", (), {"returncode": 1, "stdout": b""})()
+            with patch.object(doctor.subprocess, "run", side_effect=[listed, permitted]):
+                return doctor.content_errors(root)
+
+    def test_markdown_titles_references_and_images(self):
+        for body in (
+            '[Guide](guide.md "Introduction")',
+            "[Guide][g]\n\n[g]: guide.md 'Introduction'",
+            "[Guide][]\n\n[Guide]: guide.md",
+            "[Guide]\n\n[Guide]: guide.md",
+            "![Example][image]\n\n[image]: guide.md",
+        ):
+            with self.subTest(body=body):
+                self.assertEqual(self.content_errors(body), [])
+        for body in ("[Missing][g]\n\n[g]: missing.md", "![Missing](missing.md)"):
+            with self.subTest(body=body):
+                self.assertTrue(self.content_errors(body))
+
+    def test_uri_fragments_queries_and_encoded_paths(self):
+        for body in (
+            "[Contact](mailto:team@example.invalid)",
+            "[Phone](tel:+123)",
+            "[Web](https://example.invalid/guide)",
+            "[Web](//example.invalid/guide)",
+            "[Here](#section)",
+            "[Here](?plain=1#section)",
+            "[Guide](guide.md?plain=1#section)",
+            "[Spaces](docs/with%20space.md)",
+            "[Spaces](<docs/with space.md>)",
+        ):
+            with self.subTest(body=body):
+                self.assertEqual(self.content_errors(body), [])
+        self.assertEqual(self.content_errors("[Guide](../guide.md)", "docs/readme.md"), [])
+
+    def test_examples_are_not_rendered_links(self):
+        self.assertEqual(self.content_errors(
+            '`[Example](missing.md)`\n\n```md\n[Example](missing.md)\n```\n'
+        ), [])
+
+    def test_html_links_and_images_are_checked(self):
+        for body in ('<a href="guide.md">Guide</a>', '<img src="guide.md" />'):
+            with self.subTest(body=body):
+                self.assertEqual(self.content_errors(body), [])
+        for body in ('<a href="missing.md">Missing</a>', '<img src="missing.md">'):
+            with self.subTest(body=body):
+                self.assertTrue(self.content_errors(body))
+        self.assertEqual(self.content_errors('<!-- <a href="missing.md">Example</a> -->'), [])
+
+    def test_link_paths_cannot_bypass_publication_boundary(self):
+        for target in (
+            ".local/private.md", "../guide.md", "/guide.md", "%2Fguide.md",
+            "%2e%2e/guide.md", "docs/%2e%2e/%2e%2e/guide.md", "docs/%00.md",
+            "docs/%5cguide.md", "file:///guide.md", "javascript:alert(1)",
+        ):
+            with self.subTest(target=target):
+                self.assertTrue(self.content_errors(f'<a href="{target}">Link</a>'))
+
+    def test_missing_markdown_dependency_is_reported(self):
+        with patch.object(doctor, "MarkdownIt", None):
+            self.assertTrue(any("markdown-it-py is missing" in error for error in doctor.content_errors(ROOT)))
+
+    def test_overlay_symlink_loop_is_reported(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "loop.md").symlink_to("loop.md")
+            value = config()
+            value["repositories"]["sample"]["overlays"] = ["loop.md"]
+            errors = doctor.config_errors(value, root)
+            self.assertTrue(any("cannot be resolved" in error for error in errors))
+
+    def test_cli_checks_actual_git_inventory(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            subprocess.run(["git", "init", "--template=", "-q", str(root)], check=True)
+            (root / "config").mkdir()
+            (root / "config/repositories.example.yaml").write_text(
+                (ROOT / "config/repositories.example.yaml").read_text()
+            )
+            (root / ".gitignore").write_text(".local/\n")
+            (root / ".local").mkdir()
+            (root / ".local/private.md").write_text("ghp_" + "x" * 24)
+            (root / "guide.md").write_text("Published\n")
+            document = root / "readme.md"
+            command = [sys.executable, str(ROOT / "scripts/doctor.py"), "--root", str(root)]
+            document.write_text('[Guide](guide.md "Introduction")\n[Contact](mailto:team@example.invalid)\n')
+            valid = subprocess.run(command, capture_output=True, text=True)
+            self.assertEqual(valid.returncode, 0, valid.stderr)
+            for body in ("[Missing][g]\n\n[g]: missing.md", "[Private](.local/private.md)"):
+                document.write_text(body)
+                invalid = subprocess.run(command, capture_output=True, text=True)
+                self.assertEqual(invalid.returncode, 1, invalid.stdout)
+                self.assertIn("local Markdown link", invalid.stderr)
 
 
 if __name__ == "__main__":

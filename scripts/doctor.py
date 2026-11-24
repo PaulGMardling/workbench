@@ -2,18 +2,68 @@
 """Read-only static readiness checks; never repairs, installs or runs target Git."""
 
 import argparse
+from html.parser import HTMLParser
 import os
 from pathlib import Path
+import posixpath
 import re
 import shutil
 import string
 import subprocess
 import sys
+from urllib.parse import unquote, urlsplit
 
 try:
     import yaml
 except ImportError:
     yaml = None
+
+try:
+    from markdown_it import MarkdownIt
+except ImportError:
+    MarkdownIt = None
+
+
+class HTMLDestinations(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.targets = []
+
+    def handle_starttag(self, tag, attrs):
+        self.targets.extend(value for name, value in attrs if name in {"href", "src"} and value)
+
+
+def markdown_destinations(body):
+    def walk(tokens):
+        for token in tokens:
+            attribute = {"link_open": "href", "image": "src"}.get(token.type)
+            if attribute:
+                yield token.attrGet(attribute)
+            if token.type in {"html_inline", "html_block"}:
+                html = HTMLDestinations()
+                html.feed(token.content)
+                yield from html.targets
+            if token.children:
+                yield from walk(token.children)
+
+    yield from walk(MarkdownIt("commonmark").parse(body))
+
+
+def local_destination(source, target):
+    if "\\" in target:
+        raise ValueError("backslashes are not portable link separators")
+    url = urlsplit(target)
+    if url.scheme.lower() in {"file", "javascript", "vbscript", "data"}:
+        raise ValueError("file or active-content URI is not a publication link")
+    if url.scheme or url.netloc:
+        return None
+    path = unquote(url.path, errors="strict")
+    if "\0" in path or "\\" in path or path.startswith("/"):
+        raise ValueError("local links must be repository-relative paths")
+    destination = posixpath.normpath(posixpath.join(posixpath.dirname(source), path)) if path else source
+    if destination == ".." or destination.startswith("../"):
+        raise ValueError("local link escapes workbench")
+    return destination
 
 
 def load_config(path):
@@ -128,7 +178,11 @@ def config_errors(config, root, repository=None, environment=False, host="extern
                 errors.append(f"{label}.overlays: expected nonempty relative paths")
                 continue
             p = Path(overlay)
-            resolved = (root / p).resolve()
+            try:
+                resolved = (root / p).resolve()
+            except (OSError, RuntimeError, ValueError):
+                errors.append(f"{label}.overlays: path cannot be resolved")
+                continue
             if p.is_absolute() or ".." in p.parts or root.resolve() not in resolved.parents or p.suffix != ".md":
                 errors.append(f"{label}.overlays: path must be Markdown inside workbench")
                 continue
@@ -159,6 +213,8 @@ def config_errors(config, root, repository=None, environment=False, host="extern
 
 def content_errors(root):
     """Inspect this workbench's tracked and nonignored files, not private overlays."""
+    if MarkdownIt is None:
+        return ["content: markdown-it-py is missing; use requirements-dev.txt in an authorised environment"]
     result = subprocess.run(
         ["git", "-C", str(root), "ls-files", "--cached", "--others", "--exclude-standard", "-z"],
         capture_output=True, check=False,
@@ -195,15 +251,13 @@ def content_errors(root):
             if private.search(line):
                 errors.append(f"{rel}:{number}: possible private path, internal URL or credential")
         if path.suffix == ".md":
-            for target in re.findall(r"\]\(([^)]+)\)", body):
-                if "://" in target or target.startswith("#"):
-                    continue
-                destination = (path.parent / target.split("#")[0]).resolve()
+            for target in markdown_destinations(body):
                 try:
-                    published = destination.relative_to(root.resolve()).as_posix()
-                except ValueError:
-                    published = None
-                if published not in paths:
+                    published = local_destination(rel, target)
+                except (ValueError, UnicodeError) as exc:
+                    errors.append(f"{rel}: invalid link destination ({exc})")
+                    continue
+                if published is not None and published not in paths:
                     errors.append(f"{rel}: local Markdown link does not target a published file")
     return errors
 
