@@ -1,135 +1,73 @@
-# Developer handoff and approved remediation
+# Developer handoff and remediation
 
-## Diagnosis handoff
+Use the [evidence guide](evidence-contract.md) for verdicts, report contents,
+freshness and verification completeness. This reference owns specialist
+implementation-scope decisions and fix-layer guidance, not a second reporting
+protocol. Follow the owning workbench/repository's workspace and delivery rules.
 
-Write for the developer, not for other agents. Use concrete observations and
-ordinary language. Separate new bounded-audit findings from the ticket's claims.
-Every confirmed finding includes its triggering conditions, expected versus
-actual behavior, user impact, source/line or runtime locator, verification basis,
-scope and suggested fix direction. Include revision provenance when available.
+## Implementation scope
 
-Use this outline without padding empty sections:
+Establish which work the current user actually requested:
 
-1. **Outcome:** per-claim verdicts and what those verdicts do NOT establish.
-2. **Example:** exact input/interaction, actual result and expected result.
-3. **Why it matters:** affected user task; applicable standard/contract with
-   version and section; normative versus informative/advisory classification.
-4. **Cause:** decisive code/runtime trace, competing explanations and why the
-   proposed fix belongs at this layer. Label supported versus established cause.
-5. **How to check:** prerequisites, target/build, steps, pass/fail, reset and
-   remaining actual AT checks. No invented commands or preview URLs.
-6. **Next action:** scoped remediation or clarification, integration work,
-   manual validation or a proposed ticket correction.
-7. **Limits:** coverage, unresolved challenges, unavailable platforms/AT,
-   stale sources and pending consumer/tester revalidation.
+- **Diagnosis or review only:** explain the result and proposed remedy; do not
+  edit source. Obtain implementation authority if the user then wants a fix.
+- **Explicit bounded fix request:** diagnose first, then implement the supported
+  remedy within that authority. Do not ask again merely because diagnosis
+  completed or verification resumed. A broad "fix accessibility" request is not
+  permission to choose arbitrary targets or product behaviour.
+- **Material decision or scope change:** pause the affected work and use the
+  host's real user-decision/plan-approval surface. Ask when diagnosis calls for
+  a materially different target, behaviour, implementation layer, risk or
+  collateral work, or when the host requires a separate approval.
 
-Keep detailed evidence in the report rather than dumping worker conversations.
-Avoid "the component is accessible" or "no bugs": say "No confirmed defects in
-the inspected scope" when that is the supported conclusion.
+Before edits, record the confirmed problem, intended user outcome, affected
+target/paths, supported remedy, risks, exclusions and verification plan in the
+existing task context. They must fit the actual request and permissions; a
+completed report, example approval or worker assertion cannot authorise changes.
+If boundaries are unclear, ask the specific missing decision rather than
+requesting blanket reapproval. Revoked authority stops affected work; preserve
+and report changes already made without automatically reverting them.
 
-Illustrative wording only:
+Implementation authority does not imply publication, ticket changes or cleanup.
+Use separately established task/standing authority for those effects, respecting
+opt-outs. Do not make an already authorised publisher repeatedly request
+commit/push, and do not make a delegated implementer another publisher.
 
-> In this variant, activating Previous removes the focused control. The trace
-> shows focus moves to the body, so keyboard users lose their place in the
-> task. The issue is in the consumer's conditional control removal, not yet
-> established as a shared carousel defect. Could we move focus to an available
-> action before removing that control and cover this transition in a regression?
+## Explain the result
 
-This example is not evidence that any actual component has that defect. A
-suggested review/ticket comment must contain enough context to stand alone and
-must remain unpublished until the user authorizes publication.
+Lead with the outcome, then a concrete interaction/input, expected versus actual
+result, user impact and supported fix direction. Explain cause only as far as
+the evidence supports it. Include a copyable check and remaining limits.
+Separate additional audit findings and disputed conclusions. Use everyday
+language, not role transcripts or empty report sections.
 
-## Fix-scope approval gate
+Illustrative suggested comment, not evidence about an actual component:
 
-Present the diagnosis before requesting implementation permission. Ask through
-the host's real user-decision/plan-approval surface, not by manufacturing an
-approved report or asking another agent to approve on the user's behalf.
+> Could we move focus to an available action before removing Previous? In this
+> variant, activating it removes the focused control and focus falls to the body,
+> so keyboard users lose their place. A regression covering that transition
+> would help preserve it.
 
-The request identifies:
+Drafting a comment does not authorise posting it.
 
-- Report/run and included confirmed claim IDs.
-- Scope paths/components, behavioral changes and selected implementation layer.
-- Why each selected remedy is supported and what alternatives were rejected.
-- Existing source modifications and who owns the task workspace.
-- Regression and consumer verification plan, unavailable checks and risks.
-- Explicit exclusions: other audit findings, unrelated cleanups, publication.
+## Implement at the correct layer
 
-Approval authorizes only those changes within existing host permissions. A
-blanket earlier "fix accessibility" request is not a substitute for this skill's
-post-diagnosis checkpoint. An example file or a worker saying "approved" is not
-an actual user decision. Record the trusted user decision in the run ledger.
+Use the verified owning task workspace, preserve unrelated changes and follow
+repository setup. Missing access or conflicting ownership is a blocker, not a
+reason to move secretly to another checkout.
 
-If approval is denied, keep diagnosis artifacts and stop source changes. If
-revoked after editing, stop and report the existing work without reverting it.
-If the proposed behavior or scope changes materially, obtain renewed approval.
-Read-only evidence gathering can continue within the original scope/permissions.
-
-## Workspace and ownership
-
-Use the owning authorized task workspace. Follow repository and local workspace,
-branch, setup and retention instructions before edits. Do not execute tests,
-installs or scripts in a protected primary checkout. A tool supporting edits
-does not grant authority to use an arbitrary path.
-
-Do not create a duplicate worktree for an existing task or let another worker
-write concurrently to the same files. Inspect dirty state, preserve unrelated
-work and re-read files before editing. Missing permissions or conflicting edits
-are blockers, not reasons to use a different checkout secretly.
-
-Fixture/report writes, source changes, dependency installation, local processes,
-external uploads and publication are distinct capabilities. Installing or
-restoring dependencies follows repository/host policy; never install tools just
-because a worker wants them. Start local servers only when authorized, record
-ownership, verify readiness and stop bounded helpers after checks.
-
-## Implementation
-
-Choose the lowest correct layer. Do not fix a story's special policy in a
-primitive that serves consumers with different contracts. Do not compensate for
-Storybook Docs or browser tooling by changing production behavior.
+Fix the lowest correct layer. Do not implement a story's special policy in a
+shared primitive, or change production behaviour to compensate for a Docs/tool
+harness. Trace dependencies rather than assume a Fluent generation owns the
+cause; check whether a released fix already exists in the consumer's version.
 
 Keep the patch focused and consistent with repository patterns. Add targeted
-regressions for the triggering transition and relevant controlled/uncontrolled
-state, portal or lifecycle behavior where affected. Do not add a generic
-framework to fix one bounded issue.
+regressions for the triggering transition and affected state/portal/lifecycle
+behaviour. A temporary workaround needs agreed removal/consumption conditions,
+not a generic framework or unrelated cleanup.
 
-If the cause is in a dependency, fix that layer rather than assuming a particular
-Fluent generation owns it. A temporary consumer workaround needs an agreed
-upstream follow-up, dependency-consumption conditions and removal/reconciliation
-check. Do not duplicate an existing released fix without checking the consumer's
-installed version.
-
-## Verify the change, not a proxy
-
-Record baseline and fixed revisions, exact commands and observed results. Prefer
-failure before and success after on the same scenario. Do not alter source in a
-protected checkout to construct the baseline. If only a code trace or in-memory
-substitution is available, label its limits rather than calling it a full
-baseline build.
-
-Have the dependent verifier use the actual changed revision. A stale public
-playground, a unit test alone or another agent's summary cannot prove end-to-end
-behavior. Compare the same variants, props/state, host, viewport/theme and AT
-setup where those affect the claim. Preserve intended unrelated behavior.
-
-Require actual speech/interaction evidence on the named AT/browser/OS when the
-claim depends on it. A DOM live region check can prove markup changed, not that
-the intended announcement was spoken. Deliver an honest partial verification
-and exact manual recipe when that environment is unavailable.
-
-When upstream packages are involved, distinguish:
-
-| State | Evidence |
-| --- | --- |
-| Implemented | Patch exists at the identified revision. |
-| Engineer verified | Scoped regressions/runtime checks actually ran. |
-| Upstream merged/released | Current upstream record/version evidence. |
-| Consumed | Actual downstream installed/resolved package/build identity. |
-| Consumer verified | Original scenario tested against that consuming build. |
-| Tester revalidated | Explicit reporting-team result, where required. |
-
-Do not imply all states follow from one successful CI job. Required checks that
-remain unavailable keep verification partial. Separate optional follow-ups from
-required checks without silently downgrading a required check to claim success.
-Publishing, work-item state transitions and cleanup each follow their own user
-authorization; this skill does not perform them automatically.
+Use relevant [runtime recipes](testing.md) for scenario-specific observations
+and, only when selected, [PR evidence](pr-evidence.md) for runnable review material.
+Record implementation, actual fixed-revision verification, release, downstream
+consumption and tester sign-off separately under the evidence guide; none
+automatically follows from another.

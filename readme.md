@@ -19,7 +19,8 @@ contains proportionate triage and routes to three operational guides:
 
 Load only the applicable sections. The short legacy convention files remain
 compatibility pointers for existing host instructions; they are not extra
-prerequisites. Reviews and planning remain read-only. Protected Git effects,
+prerequisites. See [retiring pointers](#retiring-compatibility-pointers) before
+removing one. Reviews and planning remain read-only. Protected Git effects,
 new PRs, review submission, scheduler activation and cleanup need their own
 authority. A clone does not grant publication consent.
 
@@ -32,14 +33,18 @@ editor, review-depth or styling preferences apply to somebody else.
 
 A trusted personal host instruction can explicitly designate this checkout as
 the current user's personal workbench. Only that selection enables loading an
-ignored `.local/agent-profile.md`, if present. Merely contributing to this
-repository or finding the file does not select it.
+ignored `.local/agent-profile.md`, unless that instruction explicitly chooses
+use without a profile. Missing/unreadable profiles are disclosed, not silently
+skipped; expected profiles block only decisions that depend on them, as defined
+in [entry](workflows/agent-entry.md#personal-selection-and-authority).
+Merely contributing to this repository or finding the file does not select it.
 
 For example, configure the selected host through its supported personal settings:
 
 ```text
 Use <absolute-workbench-root> as my personal workbench.
 Read its workflows/agent-entry.md for each new task, review and resumed assignment.
+Load my .local/agent-profile.md; if unavailable, report it and pause dependent work.
 ```
 
 Replace the placeholder locally. This example does not change host settings,
@@ -66,7 +71,7 @@ Skills are not automatically registered. Explicitly load their entry and
 stage-specific references, or verify the host's supported registration.
 Instructions alone do not prove diagnostic accuracy or browser/AT execution.
 
-The [scheduler checklist](integrations/scheduler.md) is an optional design,
+The [scheduler checklist](integrations/scheduler.md) is optional guidance,
 not an installed or verified adapter. Start with one selected host and bounded
 trials of loading, delegation, resume and opt-outs. Do not activate integrations
 merely to read these documents.
@@ -95,3 +100,22 @@ For code changes in a target project, its own relevant tests and validation stil
 apply; this instruction library does not replace them. Neither a
 [handoff receipt](workflows/task-handoff.md) nor polished instructions prove
 agent compliance or host enforcement. Those claims need observed behaviour.
+
+## Retiring compatibility pointers
+
+These are aliases, not separate policy owners:
+
+| Legacy convention | Canonical guidance |
+| --- | --- |
+| `task-triage.md`, `change-assessment.md` | [Entry decisions](workflows/agent-entry.md#decision-and-proportionality) |
+| `code-review.md` | [Review](conventions/review-protocol.md) |
+| `worktree-lifecycle.md`, `create-worktree.md` | [Workspace](workflows/start-task.md) |
+| `config-validation.md` | [Workspace validation](workflows/start-task.md#validate-a-workspace) and [configuration](config/schema.md) |
+
+Keep the current pointers: configured host instructions still use legacy paths.
+When changing a host configuration with its owner's permission, point new
+references at the canonical guide. Remove an alias only after positively
+accounting for its configured host/user/overlay references and relevant active
+or resumable tasks, migrating them with permission. Repository search alone
+cannot establish that external callers are gone. Retaining a tiny alias is
+preferable to breaking an unknown caller; no deadline requires deletion.

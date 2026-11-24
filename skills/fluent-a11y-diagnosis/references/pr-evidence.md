@@ -7,10 +7,10 @@ authority. Load it before preparing applicable PR evidence or declaring readines
 
 ## Reproduction and fix verification
 
-First complete the selected diagnosis protocol: establish expected behaviour,
-whether each claim is a real defect, and the correct fix layer. Reconsider
-existing patches without discarding them. A runnable example does not by itself
-establish that a reported behaviour or proposed remedy is correct.
+Use the [evidence guide](evidence-contract.md) for verdicts, freshness and
+verification limits, and [implementation scope](remediation-and-delivery.md#implementation-scope)
+for edit authority. Reconsider existing patches without discarding them.
+This reference adds reviewer-runnable material, not another diagnosis approval.
 
 Include a focused runnable reproduction when preparing/updating an applicable
 accessibility PR on GitHub or Azure DevOps. Prefer an editable playground for
@@ -55,18 +55,11 @@ and recipe instead and report the limitation. Bound coverage honestly: Tab-out
 alone does not establish shadow-root, cross-origin, controlled-state or
 screen-reader correctness.
 
-Use the owning authorised task workspace and repository setup, never a protected
-primary checkout for execution. The recipe grants no source-edit, install,
-comment, PR-state or publication permission. Request unavailable permissions
-or human AT observations rather than substitute success-shaped claims.
-
 ## Description updates and screenshots
 
-Preserve the live template, unrelated prose, attachments and draft/ready state.
-Re-read before editing, reconcile concurrent changes, and verify saved links.
-Recheck the recipe/fixed revision after relevant PR changes. Delivery authority
-comes from the current user/host, including explicitly selected standing
-instructions, not from this reference.
+Apply the owning task's delivery rules for authority, live-state checks and
+concurrent edits. Preserve templates, unrelated content and PR state; verify
+saved evidence links and recheck the recipe/fixed revision after relevant changes.
 
 Load applicable repository-specific personal evidence overlays from the selected
 configuration. Missing required guidance blocks the affected readiness decision;

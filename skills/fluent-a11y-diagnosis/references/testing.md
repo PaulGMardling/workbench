@@ -1,15 +1,14 @@
 # Bounded accessibility testing
 
-Use this guidance with [SKILL.md](../SKILL.md) and the
-[evidence contract](evidence-contract.md). A successful reproduction establishes
-what happened, not whether it is an accessibility defect. A passing automated
-check, sister-component comparison, or plausible ARIA tree is not an accessibility
-certificate. Keep execution outcome, claim validity, root cause and remedy
-separate.
+Read the sections relevant to the current runtime investigation, not a mandatory
+full checklist. The [skill](../SKILL.md) defines verdicts,
+[evidence guide](evidence-contract.md) defines reporting/verification quality, and
+[implementation scope](remediation-and-delivery.md#implementation-scope) defines
+source-edit authority. This reference supplies practical diagnostic recipes.
 
 ## 1. Agree the boundary and discover capabilities
 
-Name the affected component, user task, claim IDs, reported configuration and
+Name the affected component, user task, reported configuration and
 revision. The target may be a Fluent website/page or public library generation,
 including v0, v8 or v9; do not assume a dependency chain.
 Include relevant variants and callers: for example, the reported
@@ -98,9 +97,9 @@ relevant focus-management libraries, native APIs, polyfill setup, browser
 support and intended interaction contracts. A difference is an observation,
 not proof that either implementation is defective or must copy the other.
 
-Record a comparison's `equivalence` object with `targets`, `matchedInputs`,
-`intentionalDifferences`, `unknowns` and `usableForVerdict`. Match or explicitly
-account for:
+Explain in ordinary language what was compared, which inputs matched,
+intentional differences and unknowns, and whether the comparison supports a
+verdict. Match or explicitly account for:
 
 - Actual source/build revision, resolved package versions and dependency graph
   for the selected targets; no fixed set of Fluent generations is required.
@@ -112,7 +111,7 @@ account for:
   placement, focus management and relevant application wrappers.
 - Browser, OS, AT, viewport, zoom, input mode and relevant settings.
 
-Unknown versions remain `unknown`. A URL or branch name does not prove which
+Say when versions are unknown. A URL or branch name does not prove which
 bundle is running. Non-equivalent comparisons are leads, not decisive evidence
 of a regression or correct fix. In particular, do not add `preventDefault`,
 focus handlers, labels, live regions, CSS overrides or state resets that repair
@@ -140,7 +139,7 @@ healthy render cannot be established, stop that experiment and label it blocked;
 do not interpret an error page or absent widget as evidence about accessibility.
 
 For baseline/fixed comparisons, label both identities explicitly and keep them
-distinct in artifacts. After separately approved remediation, repeat the same
+distinct in artifacts. After authorised remediation, repeat the same
 inputs and observations against the actual fixed revision with equivalent
 configuration. Do not compare an old deployed baseline with an unrelated
 dependency upgrade and attribute the result to one patch. Verify the baseline
@@ -150,11 +149,10 @@ be obtained, disclose that limit instead of inventing a before/after result.
 
 ## 4. Run a small scenario-specific smoke matrix
 
-Expand this matrix only for relevant affected variants/callers. Record each row
-and its tested configurations in `coverage`, using `covered`,
-`not-applicable`, `unavailable` or `deferred`, with a reason. `covered` means
-inspected, not passed. A row can expose defects. Mark a partially exercised row
-as separate covered and unavailable/deferred subareas rather than hiding gaps.
+Use only rows relevant to affected variants/callers. Explain what was inspected,
+what failed, and what was unavailable, deferred or inapplicable. Inspection is
+not a passing result. Split partially exercised areas rather than hiding gaps;
+no prescribed coverage field or status vocabulary is required.
 
 | Area | Practical checks | Evidence and user impact |
 | --- | --- | --- |
@@ -190,8 +188,8 @@ speech from a tester's paraphrase. A speech log can help if supported and
 authorized; do not claim to have heard output merely because a DOM live region
 or accessibility-tree node changed.
 
-If actual AT or a capable operator is unavailable, label the AT check
-`unavailable` and the speech claim unresolved. Provide a manual recipe with the
+If actual AT or a capable operator is unavailable, say so and leave the speech
+claim unresolved. Provide a manual recipe with the
 target version, platform prerequisites, initial state, specific navigation and
 activation sequence, expected semantic information, observations to capture and
 reset instructions. Do not invent exact spoken wording; voice and verbosity
@@ -201,38 +199,18 @@ platform explanation within the agreed boundary, or leave it explicitly deferred
 
 ## 5. Copyable claim recipe
 
-Copy this for each claim. Replace placeholders before execution; it is a
-template, not an executed test or a requirement to install a particular runner.
+Use this short outline when a copyable recipe helps; adapt it to the scenario.
+It is not a required form, executed test or reason to install a runner.
 
 ```text
-Claim ID / user task:
-Boundary: component, affected variants/callers; exclusions:
-Authorization: reads / task-workspace execution / fixtures / browser / AT /
-  server / artifacts / external transfer (each permitted or not permitted):
-Capabilities: available vs authorized; missing prerequisites:
-Target: original app | standalone story | local fixture | approved playground:
-Identity: source revision, runtime build, resolved package versions:
-Environment: date, OS/browser/AT versions, settings, viewport, zoom, theme:
-Equivalence: matched inputs, intentional differences, unknowns, usable for verdict:
-Expected behavior: applicable contract, W3C version/section and authority:
-Hypothesis and alternative explanation; observation that would distinguish them:
-Freshness/health check: how to prove this is the intended live render:
-Setup: authorized workspace, existing runner/route and synthetic data:
-Exact command (if applicable): <verified existing command and bounded selector>
-Interaction:
-  1. Reset to <documented initial state>.
-  2. Focus <named starting control> using <input method>.
-  3. Perform <specific keys/actions and state transitions>.
-  4. Observe <focus, visible state, semantics, measured colors or actual AT output>.
-Expected result / pass-fail condition:
-Actual result: <leave unobserved until run; do not copy expectation here>
-Evidence: E- IDs, exact command/sequence, output and authorized artifact locators:
-Execution outcome: reproduced | not-reproduced | blocked | unavailable | not-run:
-Validity: pending adjudication; execution outcome alone does not decide it:
-Coverage: each applicable row/variant/caller; status and reason:
-Limits / next discriminating check:
-Run budget: bounded attempts/time; stop conditions:
-Reset/cleanup: restore this run's state; stop only resources this run owns:
+Scenario and user task; relevant variants and exclusions:
+Target source/runtime revision and environment; missing prerequisites:
+Permitted workspace/resources, setup and freshness check:
+Numbered interaction steps; exact existing command where applicable:
+Expected result and applicable contract; pass/fail condition:
+Actual observations and evidence locators (only after execution):
+Limits, alternative explanations and next check:
+Reset steps; bounded stop condition and resources owned by this run:
 ```
 
 For approved fix verification, duplicate the recipe for the fixed identity and
@@ -249,33 +227,11 @@ install a missing tool or change source to force a result. Stop and report when
 permissions, authentication, browser ownership, build identity, harness health,
 AT availability or required dependencies block a trustworthy observation.
 Provide the remaining manual steps and prerequisites. A blocked or
-not-reproduced experiment is not a `no-defect-established` verdict.
+not-reproduced experiment does not establish that there is no defect.
 
-Persist evidence using the contract's fields and actual authorized locators:
-revision/environment, basis, execution status, exact runtime command or
-interaction, result, supporting/contradicting claim IDs and limits. Capture only
-relevant DOM/tree snippets, screenshots, logs and measurements. Do not fabricate
-traces, commands, speech, artifacts, successful tests or revision lineage.
-Label decisive source reasoning `code-inspection` and unexecuted when appropriate.
-Keep proposed manual checks distinct from observed evidence.
-
-For each claim, teach the evidence chain in ordinary language:
-
-> The user is trying to do X. After action Y, observation E-… shows Z.
-> This prevents or confuses task W. The applicable requirement/contract E-…
-> expects Q under these conditions. Counter-evidence E-… does/does not explain
-> the difference. The problem is supported, but this experiment does/does not
-> establish the cause or the requested remedy.
-
-Use the contract's five verdicts only after this comparison. Positive bounded
-evidence of expected accessible behavior is needed for `no-defect-established`;
-verified revision lineage and current-target evidence are needed for
-`already-corrected`. Keep deployment/consumer uptake separate. A confirmed
-barrier does not validate every suggested fix.
-
-Finish with inspected scope, checks actually run, per-area coverage, evidence
-links, unresolved alternatives and specific next checks. Separate original
-ticket claims from new bounded audit findings. Required unavailable checks keep
-verification partial; disclose missing original-environment or AT observations.
-Do not describe this component audit as whole-product conformance, publish
-results, close tickets or begin remediation without the corresponding authority.
+Keep relevant traces, screenshots and measurements at actual authorised
+locators, then report observations, counterevidence and remaining checks using
+the evidence guide. For example: "After Tab, focus moves to the body instead of
+the next action; this interrupts the user's task." Explain what that observation
+establishes and what still needs investigation. Do not turn the recipe or a
+blocked experiment into a claim of successful execution.

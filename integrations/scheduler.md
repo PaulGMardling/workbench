@@ -1,66 +1,37 @@
-# Opt-in scheduler and agent-host compatibility
+# Optional scheduler or agent-host setup
 
-Status: integration design and acceptance checklist, **not an installed or
-verified adapter**. This applies to TEG or another selected host without copying
-its private implementation or assuming a specific version.
+No scheduler or adapter is installed or verified by this library. Use this
+reference only when the user requests setup for a selected host, such as TEG.
+Do not add orchestration infrastructure merely to use Markdown instructions.
 
-Before activation, record the installed host version and current documented
-configuration/prompt contracts in authorised local storage. Do not reuse stale
-configuration recipes: unknown settings may be ignored, a brief may load
-fail-open, and publication flags may constrain only the controller, not agents.
-An independent review role is not necessarily a read-only tool boundary.
+## Configure one real host
 
-## Thin local adapter
+Read that host's current documented loading and permission contracts. Through
+its supported instruction mechanism, point assignments and resumed tasks at the
+actual authorised workbench's [entry](../workflows/agent-entry.md). Keep paths
+and host configuration private; do not copy this library into every prompt.
+This document does not authorise changing settings or activating a schedule.
 
-Through the host's supported personal/original-root instruction mechanism,
-provide a small pointer with the actual authorised workbench location:
+Select a personal profile only through trusted current-user instructions.
+Generic adoption uses shared guidance, not the owner's private defaults.
+Missing required guidance blocks dependent work, not an excuse to reuse cached
+rules. Follow [delivery authority](../workflows/finish-task.md) and opt-outs;
+the controller and its workers must both remain within them.
 
-```text
-For each assignment and resumed task, read <absolute-workbench-root>/workflows/agent-entry.md
-and the required stage-specific references and declared local overlays.
-Record the loaded revision, guidance and relevant dirty state in the private task handoff.
-Fingerprint mutable guidance when a consequential handoff needs it.
-If required guidance cannot be read, block dependent work; do not use cached rules.
-Pass the same guidance and authority boundaries to engineers and reviewers.
-```
+## Observe a bounded pilot
 
-Replace placeholders locally. Do not commit machine paths or private adapter
-contents to shared repositories. Reading this template does not configure the
-host. Keep one canonical set of detailed rules in workbench rather than copying
-it into every prompt.
+With separate user approval, use a disposable target and synthetic task to check:
 
-Apply [delivery](../workflows/finish-task.md) only within the current user's
-explicit authority, including selected standing preferences, opt-outs and host limits.
-Automatic commit/push is not permission for reviewers to publish or for a
-controller to commit unrelated leftovers. If a host requires a conflicting
-predetermined branch, exceeds that delivery scope, or cleans up without the
-required per-operation approval, reconcile the conflict before use.
-Do not weaken workbench gates silently. Where available,
-use supported disabled controller effects and scoped credentials/execution
-permissions; a prompt or `push = false` alone is not enforcement.
-If the host cannot honour a required boundary, mark it incompatible and keep
-that assignment interactive or on another authorised host. Do not patch the
-host or invent settings as part of workbench setup.
+- The host actually reads entry and relevant references, including on resume.
+- Selected personal guidance loads, or missing guidance is reported; a generic
+  clone gains no personal authority.
+- Delegation preserves scope, ownership, required independence and opt-outs.
+- Controller and worker effects respect read-only work, publication boundaries,
+  denied actions and per-operation cleanup approval.
 
-## Bounded acceptance pilot
-
-Use a separately authorised disposable target with synthetic tasks. No production
-schedule, live publication, cleanup or fixture is authorised by this checklist.
-
-| Case | Required observation |
-| --- | --- |
-| New task | Owner reads entry/routed guidance; records revision and relevant dirty state before dependent work |
-| Profile selection | A generic clone grants no publication consent; only trusted personal selection loads the current user's profile |
-| Review | Reviewers receive full scope/rules; required independent pass is preserved; no unauthorised edits/publication |
-| Implementation delivery | Effects match the current user's actual task/standing authority; no PR is created without a request |
-| Delivery opt-out | "Do not commit/push" is retained across delegation/resume; denied steps remain unperformed |
-| Missing entry/overlay | Assignment blocks explicitly rather than silently continuing |
-| Resume | Changed guidance/overlay is detected and affected decisions revalidated |
-| Scheduled request | Same routing and authority apply; ambiguous decisions become a blocked result, not guessed permission |
-| Publication/cleanup denied | Both controller and agent effects remain within the actual enforced boundary |
-| Workbench update | Operator deliberately selects the update; active tasks retain receipts and reconcile changes safely |
-
-Record commands, receipts, results and limits privately. A supplied prompt or
-successful launch proves neither loading nor behavioural compliance. Do not
-claim compatibility until the relevant cases were observed against the installed
-version. Refresh the assessment after host, adapter or material guidance changes.
+Record the observed version, actions, results and limits privately. A prompt,
+successful launch or `push = false` setting is not an enforced boundary.
+Verify available permission controls; do not invent settings or weaken rules
+to fit a host. If it cannot honour a required boundary, keep that task interactive
+or use another authorised host. Claim compatibility only for observed cases and
+recheck them after material host, configuration or guidance changes.
