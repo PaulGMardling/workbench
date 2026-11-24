@@ -30,8 +30,8 @@ Do not fetch, create, relocate or launch an editor merely to continue it.
 This section is independently usable as a read-only health check.
 Load local configuration only when the operation depends on it. Match the exact
 repository/path, never a fuzzy alias or the default for an unrelated checkout.
-Use [the configuration contract](../config/schema.md) and its doctor command.
-The example is a fixture, not a fallback for missing personal configuration.
+Read [the configuration guide](../config/schema.md) and check the values needed
+for this operation. The example is not a fallback for missing personal configuration.
 
 Check the owning repository and task state, required remotes and configured base
 through permitted read-only metadata. Check the worktree root's parent before
@@ -39,7 +39,7 @@ manual creation; the root itself may not exist yet. Load applicable declared
 overlays before dependent authentication, setup or readiness decisions.
 Missing required guidance blocks that decision, not unrelated read-only work.
 
-Doctor checks paths and configuration shapes, not actual Git health, remote
+File/configuration inspection alone does not prove Git health, remote
 permissions, authentication or runtime setup. Do not hydrate objects, invoke
 hooks or fetch as read-only preflight. If metadata access itself can mutate a
 protected checkout, report the limitation and use an authorised alternative.

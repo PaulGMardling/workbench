@@ -2,8 +2,8 @@
 
 `repositories.yaml` is ignored, required for repository-dependent setup, and
 never replaced by the example. YAML mappings use unique keys; duplicates are
-errors. Unknown fields are errors so misspellings do not silently disable rules.
-The [doctor](../scripts/doctor.py) validates this contract using PyYAML.
+errors. Check unknown fields explicitly so misspellings do not silently disable
+rules. This is a reading guide for agents and people, not an executable schema.
 
 | Field | Contract |
 | --- | --- |
@@ -27,18 +27,13 @@ Expand a leading `~/` for path checks. Select an explicit editor override first,
 then `copilotApp.ide` inside Copilot, otherwise entry `ide`. Do not interpret
 configuration as shell code or run an editor as a health check.
 
-Doctor's optional environment mode checks paths, a Git marker, worktree-root
-parent, selected executable and declared overlay readability. It does not
-execute target Git, hydrate objects, validate remote permissions/base refs,
-contact services or prove setup succeeded. Perform those remaining checks
-through the operation-specific approved workflow.
+Before relying on an entry, check its required values against this guide and
+confirm paths, repository identity and declared overlay readability through
+permitted read-only tools. For creation, check the worktree root's parent;
+for requested editor setup, check the selected executable separately.
+Do not waive missing required overlays or repository/path failures.
 
-For an explicitly requested local health check, run from workbench:
-
-```sh
-python3 scripts/doctor.py --config config/repositories.yaml --repository example --environment --host copilot
-```
-
-Replace `example` with the verified alias. Environment mode includes editor
-availability; report an editor-only failure separately when editor setup was
-not selected. Do not waive missing required overlays or repository/path failures.
+File existence alone does not establish Git health, remote permissions,
+authentication or working dependencies. Perform operation-specific checks
+through the authorised workspace workflow without installing a configuration
+checker or treating configuration as shell code.

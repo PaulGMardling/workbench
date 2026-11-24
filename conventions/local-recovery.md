@@ -12,7 +12,8 @@ On a new machine, clone the portable workbench, restore approved local files
 without overwriting newer ones, and reconcile paths and declared overlays.
 Profile existence alone must not activate personal preferences or publication
 consent. Re-establish the current user's trusted host selection separately.
-Use [the configuration contract](../config/schema.md) and read-only doctor.
+Check restored values against [the configuration guide](../config/schema.md)
+using permitted read-only tools.
 Missing required files block dependent operations; optional helpers can remain
 unavailable with an explicit limit. Do not discover private configuration by
 searching unrelated users' directories or copying another worktree's state.

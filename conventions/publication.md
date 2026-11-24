@@ -14,8 +14,9 @@ Avoid broad staging commands. Recheck account, destination and actual branch
 before any publication authorised under the
 [delivery authority](../workflows/finish-task.md) or a task-specific request.
 
-Run the portable [validation command](../readme.md#validation) in an authorised
-execution workspace. Static pattern/link checks catch mistakes, not all secrets,
-licensing issues or disclosure restrictions. Review manually as well. If a
-leak is discovered, stop publication and follow the owning service's incident
-process; ignore rules cannot remove existing history.
+Read the final staged content and follow local links to confirm their targets
+are intended published files, not private overlays or missing paths. Check for
+personal paths, internal material, credentials and disclosure/licensing
+restrictions; no scanner or passing check establishes publication permission.
+If a leak is discovered, stop publication and follow the owning service's
+incident process; ignore rules cannot remove existing history.

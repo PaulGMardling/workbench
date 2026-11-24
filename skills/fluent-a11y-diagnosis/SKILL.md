@@ -84,6 +84,7 @@ Before a full run, read [evidence/reporting](references/evidence-contract.md),
 fix approval. Missing references permit only a disclosed preliminary assessment,
 not a complete audit or remediation.
 
-Use the [report example](examples/report.json) for the evidence record.
-[Integration guidance](references/integration.md) covers invocation, validation
-and possible host integration; this folder is not automatically registered.
+Write the evidence record in plain-language Markdown using the reporting guidance;
+no machine-readable schema or validator is required.
+[Integration guidance](references/integration.md) covers invocation and possible
+host integration; this folder is not automatically registered.

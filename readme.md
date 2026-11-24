@@ -2,7 +2,9 @@
 
 A portable workflow library with optional specialist skills and separate personal
 configuration. Target repositories remain the authority for shared contribution
-policy. This is not an installed agent framework or scheduler.
+policy. Read the Markdown directly: there is no runtime, dependency installation,
+test suite or validation CI required to use this library. This is not an
+installed agent framework or scheduler.
 
 ## Start here
 
@@ -49,21 +51,20 @@ For repository-dependent setup, inspect
 [the example](config/repositories.example.yaml) and create an ignored
 `config/repositories.yaml` with verified paths, remote roles and branch strategy.
 Never overwrite existing configuration or use the example as a fallback.
-The [schema](config/schema.md) defines the contract. Generic read-only work does
-not require a workstation inventory.
+The [configuration guide](config/schema.md) explains the settings. Generic
+read-only work does not require a workstation inventory.
 
 ## Optional capabilities
 
 [Fluent accessibility diagnosis](skills/fluent-a11y-diagnosis/SKILL.md) contains
-evidence-backed diagnosis, supervised remediation and structural reporting.
-W3C WAI is its primary standards reference. Its detailed reporting protocol is
-for users/consumers that need it, not a prerequisite for ordinary development.
+evidence-backed diagnosis and supervised remediation, with plain-language
+Markdown findings. W3C WAI is its primary standards reference.
 [Runnable PR evidence](skills/fluent-a11y-diagnosis/references/pr-evidence.md)
 is required only when selected by task, repository or personal policy.
 
 Skills are not automatically registered. Explicitly load their entry and
 stage-specific references, or verify the host's supported registration.
-Synthetic checks do not prove diagnostic accuracy or browser/AT execution.
+Instructions alone do not prove diagnostic accuracy or browser/AT execution.
 
 The [scheduler checklist](integrations/scheduler.md) is an optional design,
 not an installed or verified adapter. Start with one selected host and bounded
@@ -72,48 +73,25 @@ merely to read these documents.
 
 ## Publication and private state
 
-Tracked files contain sanitised shared guidance, checks, the optional skill and
-synthetic fixtures. The explicit `.gitignore` allowlist excludes real config,
-profiles, account/setup overlays, internal assessment material, browser/debugging
-helpers, originals and task history. New files require deliberate review and an
-exact allowlist entry; never force-add them.
+Tracked files contain sanitised shared guidance, optional skill instructions and
+an illustrative configuration. The explicit `.gitignore` allowlist excludes
+real config, profiles, account/setup overlays, internal assessment material,
+browser/debugging helpers, originals and task history. New files require
+deliberate review and an exact allowlist entry; never force-add them.
 
 Private visibility and passing scanners do not establish disclosure permission.
 Inspect staged filenames, modes, links and contents; already tracked files are
 not protected by ignore rules. Follow [publication](conventions/publication.md).
 Git is not a backup of ignored state: use [private recovery](conventions/local-recovery.md).
 
-## Validation
+## Keeping instructions useful
 
-Use Python 3.9+ with `requirements-dev.txt` installed in an authorised execution
-environment. CI uses a disposable runner; doctor never installs or repairs.
-PyYAML reads configuration and markdown-it-py parses Markdown destinations.
+Read changed guidance in context, follow its references and confirm it agrees
+with the current user/host permissions and target repository policy. Check local
+configuration only when the operation depends on it. Do not install tooling
+merely to read or maintain these instructions.
 
-```sh
-PYTHONDONTWRITEBYTECODE=1 python3 scripts/doctor.py
-PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v
-PYTHONDONTWRITEBYTECODE=1 python3 skills/fluent-a11y-diagnosis/scripts/evaluate.py
-PYTHONDONTWRITEBYTECODE=1 python3 skills/fluent-a11y-diagnosis/scripts/validate_report.py skills/fluent-a11y-diagnosis/examples/report.json
-```
-
-Doctor checks the publication boundary, disclosure patterns, rendered Markdown
-links/images (including references and HTML `href`/`src`) and example config.
-It ignores link-shaped code examples, does not fetch remote URIs or validate
-anchors, and requires local targets to be published files. It is not a complete
-secret, HTML or URL-safety scanner.
-
-For explicitly selected local health checks:
-
-```sh
-python3 scripts/doctor.py --config config/repositories.yaml --repository example --environment --host copilot
-```
-
-Replace `example` with a verified configured alias. Environment mode includes
-the configured editor's availability; distinguish an editor-only failure from
-workspace validity when editor setup was not requested. No target Git, network,
-authentication or runtime verification is performed.
-
-Exit 0 means the selected static checks passed, 1 means content/configuration/
-readiness failure, and 2 means invalid CLI usage. Neither these checks nor a
-[handoff receipt](workflows/task-handoff.md) proves agent compliance or host
-enforcement. Host setup and compatibility claims need observed behavioural trials.
+For code changes in a target project, its own relevant tests and validation still
+apply; this instruction library does not replace them. Neither a
+[handoff receipt](workflows/task-handoff.md) nor polished instructions prove
+agent compliance or host enforcement. Those claims need observed behaviour.

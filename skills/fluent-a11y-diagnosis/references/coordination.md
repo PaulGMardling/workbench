@@ -95,7 +95,7 @@ fields describe existing authorization; filling them in does not create it.
 ```text
 Run/stage/role; assigned claims and scope actually inspected:
 Outcome: completed | bounded stop | blocked; reason:
-Evidence records: E- IDs with every field required by evidence-contract.md.
+Evidence: supporting and conflicting observations, using labels where helpful.
   Include original locators, revisions, environment/date, exact executed
   commands/interactions and observed results; mark unexecuted inspection.
 Interpretation: claim -> supporting IDs, counterevidence IDs, reasoning,
@@ -107,8 +107,8 @@ Limits/blockers and smallest next check requiring coordinator action:
 ```
 
 The coordinator checks decisive evidence and applicability, reconciles
-contradictions without voting, and retains unresolved disagreements in
-`challenges` and the explanation. Do not discard counterevidence because a
+contradictions without voting, and retains unresolved challenges in the
+explanation. Do not discard counterevidence because a
 majority agrees. Summarize findings rather than forwarding raw transcripts.
 
 ## Sequential fallback and completion
