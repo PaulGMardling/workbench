@@ -27,11 +27,27 @@ Expand a leading `~/` for path checks. Select an explicit editor override first,
 then `copilotApp.ide` inside Copilot, otherwise entry `ide`. Do not interpret
 configuration as shell code or run an editor as a health check.
 
-Before relying on an entry, check its required values against this guide and
-confirm paths, repository identity and declared overlay readability through
-permitted read-only tools. For creation, check the worktree root's parent;
-for requested editor setup, check the selected executable separately.
-Do not waive missing required overlays or repository/path failures.
+## Check only what the operation needs
+
+The table above describes a complete configuration entry. When authoring or
+changing configuration, validate that contract. When using an existing entry,
+check only values needed for the selected operation through permitted read-only
+tools; do not make an unrelated missing editor or creation setting a blocker.
+
+| Operation | Relevant checks |
+| --- | --- |
+| Read-only investigation | Target identity and applicable guidance; no local inventory required unless the investigation depends on it |
+| Existing workspace selection | Exact repository/path, owning task and actual checkout; applicable setup overlays, not editor or new-branch settings |
+| New workspace creation | Repository path, worktree root/parent, base/push roles, base branch, selected naming strategy and required setup overlays |
+| Requested editor launch | Verified workspace and selected executable; inspect entry `ide` only when it is the selected editor |
+| Existing-task publication | Verified account, repository, publishing remote/branch and current remote tip; retain the recorded destination rather than resolve a new branch name |
+
+Load overlays applicable to the operation. If a declared overlay's relevance is
+unclear, read it before deciding it can be skipped. Missing relevant values or
+required guidance block that operation; report unrelated configuration gaps
+without inventing defaults or claiming the complete entry is valid. Apply
+[workspace](../workflows/start-task.md) and
+[delivery](../workflows/finish-task.md) for the full operation-specific safeguards.
 
 File existence alone does not establish Git health, remote permissions,
 authentication or working dependencies. Perform operation-specific checks

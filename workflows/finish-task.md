@@ -62,7 +62,9 @@ is not an edit target or permission to create a replacement.
 
 ## Delivery sequence
 
-1. Complete repository-required and task-relevant validation. Distinguish new
+1. Check the requested outcome against the acceptance checks established before
+   implementation, not merely whether the patch or tests exist.
+   Complete repository-required and task-relevant validation. Distinguish new
    failures from established baseline failures and optional/unavailable checks.
    Do not claim completion or silently waive required failing/unavailable checks;
    explain the blocker and obtain direction if delivery needs an exception.

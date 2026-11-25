@@ -8,15 +8,19 @@ subagents and permissions. No runtime, report parser or test harness is required
 
 In a host with authorised file reads, give it the actual workbench location:
 
-> Read `skills/fluent-a11y-diagnosis/SKILL.md` from my workbench and the references
-> needed for this activity. Diagnose the supplied report for the named component
-> and relevant variants/callers. Return evidence and a scoped fix proposal; do
-> not edit source.
+> From the authorised workbench location, read `workflows/agent-entry.md`, then
+> `skills/fluent-a11y-diagnosis/SKILL.md` and the references needed for this
+> activity. Apply current user/host and target-repository instructions.
+> Diagnose the supplied report for the named component and relevant
+> variants/callers. Return evidence and a scoped fix proposal; do not edit source.
 
 That is a diagnosis-only example, not a required extra approval for an already
 authorised fix request. Resolve its path from the workbench, not the target
 repository. Confirm the instructions were read; file-loading does not establish
 slash-command registration or actual runtime/AT execution.
+Entry connects invocation to applicable workspace and delivery guidance.
+Loading it does not select a personal profile: that still requires trusted
+current-user instructions, including when invoking from another repository.
 
 ## Register only in a selected host
 
