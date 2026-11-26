@@ -61,7 +61,7 @@ read-only work does not require a workstation inventory.
 
 ## Optional capabilities
 
-### Reviewer agent
+### Agents
 
 [Reviewer](.github/agents/reviewer.agent.md) is an optional
 Copilot custom-agent definition. It reads the existing entry and review protocol
@@ -69,13 +69,20 @@ rather than duplicating them. Its tool list permits read/search, not shell,
 editing or posting. The caller supplies complete diff, PR-comment and execution
 evidence and coordinates any required independent second pass.
 
+[Tester](.github/agents/tester.agent.md) independently runs existing covering
+checks and verifies acceptance criteria using the entry, workspace and delivery
+guidance. Its tools permit read/search and shell, not dedicated editing tools.
+It reports actual commands, results and gaps; fixes and publication remain with
+their authorised owner. Shell can still write files, so execution permissions
+and workspace safeguards remain necessary.
+
 The `.github/agents/` location supports repository-scoped discovery in compatible
 Copilot hosts; it does not install the agent globally or expose it automatically
 in other repositories. For cross-repository use, explicitly provide the actual
 authorised Workbench root and use the selected host's documented loading
 mechanism. Keep the referenced guides available alongside the definition.
 
-Before relying on it, verify the agent appears in the host's catalog, the guides
+Before relying on an agent, verify it appears in the host's catalog, the guides
 can be read and the effective tools match the declared list. Definition creation
 is not a live compatibility or permission-enforcement test. No plugin, runner or
 automatic review pipeline is included.

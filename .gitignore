@@ -8,6 +8,7 @@
 !/.github/agents/
 /.github/agents/*
 !/.github/agents/reviewer.agent.md
+!/.github/agents/tester.agent.md
 !/integrations/
 /integrations/*
 !/integrations/scheduler.md
