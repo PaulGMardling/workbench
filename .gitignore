@@ -3,6 +3,11 @@
 !/.gitignore
 !/readme.md
 !/AGENTS.md
+!/.github/
+/.github/*
+!/.github/agents/
+/.github/agents/*
+!/.github/agents/workbench-reviewer.agent.md
 !/integrations/
 /integrations/*
 !/integrations/scheduler.md
