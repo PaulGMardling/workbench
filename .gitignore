@@ -7,7 +7,7 @@
 /.github/*
 !/.github/agents/
 /.github/agents/*
-!/.github/agents/workbench-reviewer.agent.md
+!/.github/agents/reviewer.agent.md
 !/integrations/
 /integrations/*
 !/integrations/scheduler.md

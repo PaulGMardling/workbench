@@ -63,7 +63,7 @@ read-only work does not require a workstation inventory.
 
 ### Reviewer agent
 
-[Workbench reviewer](.github/agents/workbench-reviewer.agent.md) is an optional
+[Reviewer](.github/agents/reviewer.agent.md) is an optional
 Copilot custom-agent definition. It reads the existing entry and review protocol
 rather than duplicating them. Its tool list permits read/search, not shell,
 editing or posting. The caller supplies complete diff, PR-comment and execution
